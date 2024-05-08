@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class RhythmGame extends Application {
+
+
     public void start(Stage primaryStage) {
         ScreenManager screenManager = new ScreenManager(primaryStage);
         screenManager.switchToMainMenu();

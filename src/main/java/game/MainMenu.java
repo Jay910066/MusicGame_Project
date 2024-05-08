@@ -23,11 +23,11 @@ public class MainMenu extends VBox {
 
         ImageView mainTitle = new ImageView("file:Resources/Images/MainTitle.png");
         Button playButton = new Button("Play");
-        Button optionButton = new Button("Options");
+        ImageView optionButton = new ImageView("file:Resources/Images/SettingsButton.png");
         Button exitButton = new Button("Exit");
 
         playButton.setOnAction(e -> screenManager.switchToSongListMenu());
-        optionButton.setOnAction(e -> screenManager.switchToSettings("MainMenu"));
+        optionButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu"));
         exitButton.setOnAction(e -> System.exit(0));
 
         VBox mainMenu = new VBox();

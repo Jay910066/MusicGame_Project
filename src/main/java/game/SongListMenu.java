@@ -1,22 +1,185 @@
 package game;
 
-import javafx.scene.control.Button;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
 
-public class SongListMenu extends VBox {
+import java.io.File;
+
+public class SongListMenu extends StackPane {
+
+    private VBox selector;
+    private int selectedIndex;
+    private int totalItems;
+    private HBox[] songBoxes;
+    private File[] songList;
+    private ImageView background;
+    private ImageView songCover;
+    private Text songNameText;
+
     public SongListMenu(ScreenManager screenManager) {
-        Button backButton = new Button("Back");
-        backButton.setOnAction(e -> screenManager.switchToMainMenu());
-        getChildren().add(backButton);
+        background = new ImageView();
+        getChildren().add(background);
+
+        ColorAdjust brightness = new ColorAdjust();
+        brightness.setBrightness(-0.5);
+        background.setEffect(brightness);
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double maxDimension = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+        background.setPreserveRatio(true);
+        if(background.getFitHeight() < background.getFitWidth())
+            background.setFitHeight(maxDimension * 1);
+        else
+            background.setFitWidth(maxDimension * 1);
+
+
+
+        BorderPane root = new BorderPane();
+        getChildren().add(root);
+
+
+
+        selector = new VBox();
+        root.setRight(selector);
+        selector.setFocusTraversable(true);
+        selector.requestFocus();
+        selector.setAlignment(Pos.CENTER);
+        selector.setPadding(new Insets(100));
+        selector.setSpacing(50);
+
+        File songFolder = new File("Resources/Songs");
+        songList = songFolder.listFiles();
+        totalItems = songList.length;
+        songBoxes = new HBox[totalItems];
+
+        for(int i = 0; i < totalItems; i++) {
+            Label songNameLabel = new Label(songList[i].getName());
+            songNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 60;");
+            HBox songBox = new HBox();
+            songBox.setMinHeight(100);
+            songBox.setMinWidth(600);
+            songBox.setStyle("-fx-background-color: darkgray;");
+            songBox.setAlignment(Pos.CENTER);
+            songBox.setPadding(new Insets(10));
+            songBox.getChildren().add(songNameLabel);
+            songBoxes[i] = songBox;
+        }
+
+        selectedIndex = 0;
+        selectItem(selectedIndex);
+        background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
+
+        selector.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.UP) {
+                moveUp();
+            } else if (event.getCode() == KeyCode.DOWN) {
+                moveDown();
+            }
+        });
+
+
+
+        VBox detailBox = new VBox();
+        root.setLeft(detailBox);
+        detailBox.setMinWidth(screenBounds.getWidth() / 4);
+        detailBox.setMinHeight(screenBounds.getHeight());
+        detailBox.setStyle("-fx-background-color: rgba(100, 100, 100, 0.6);");
+        detailBox.setPadding(new Insets(50));
+        detailBox.setAlignment(Pos.CENTER);
+
+        songCover = new ImageView("file:" + songList[selectedIndex].getPath() + "/cover.jpg");
+        detailBox.getChildren().add(songCover);
+        songCover.setPreserveRatio(true);
+        if(songCover.getFitHeight() < songCover.getFitWidth())
+            songCover.setFitHeight(screenBounds.getHeight() / 5);
+        else
+            songCover.setFitWidth(screenBounds.getWidth() / 5);
+
+        GridPane songInfo = new GridPane();
+        detailBox.getChildren().add(songInfo);
+        songInfo.setVgap(10);
+        songInfo.setHgap(20);
+
+        Label songNameLabel = new Label("Song Name:");
+        songInfo.add(songNameLabel, 0, 0);
+        songNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
+        songNameText = new Text(songList[selectedIndex].getName());
+        songInfo.add(songNameText, 1, 0);
+        songNameText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
+        songNameText.setFill(Color.WHITE);
+
+        HBox buttonBox = new HBox();
+        detailBox.getChildren().add(buttonBox);
+        buttonBox.setPadding(new Insets(10));
+        buttonBox.setSpacing(10);
+
+        ImageView backButton = new ImageView("file:Resources/Images/BackButton.png");
+        buttonBox.getChildren().add(backButton);
+        backButton.setOnMouseClicked(e -> screenManager.switchToMainMenu());
+
+        ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
+        buttonBox.getChildren().add(settingsButton);
+        settingsButton.setOnMouseClicked(e -> screenManager.switchToSettings("SongListMenu"));
+
+
 
         this.setOnKeyPressed(e ->{
             if(e.getCode() == KeyCode.ESCAPE)
                 screenManager.switchToMainMenu();
         });
+    }
 
-        Button settingsButton = new Button("Settings");
-        settingsButton.setOnAction(e -> screenManager.switchToSettings("SongListMenu"));
-        getChildren().add(settingsButton);
+    private void moveUp() {
+        selectedIndex = (selectedIndex - 1 + totalItems) % totalItems;
+        selectItem(selectedIndex);
+        upDateSongInfo(selectedIndex);
+    }
+
+    private void moveDown() {
+        selectedIndex = (selectedIndex + 1) % totalItems;
+        selectItem(selectedIndex);
+        upDateSongInfo(selectedIndex);
+    }
+
+    private void upDateSongInfo(int index) {
+        background.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
+        songCover.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
+        songNameText.setText(songList[index].getName());
+    }
+
+    private void selectItem(int index) {
+        selector.getChildren().clear();
+        HBox songBox1 = songBoxes[(index - 2 + totalItems) % totalItems];
+        HBox songBox2 = songBoxes[(index - 1 + totalItems) % totalItems];
+        HBox songBox3 = songBoxes[index];
+        HBox songBox4 = songBoxes[(index + 1) % totalItems];
+        HBox songBox5 = songBoxes[(index + 2) % totalItems];
+
+        songBox1.setStyle("-fx-background-color: rgba(100,100,100,1);");
+        songBox1.setScaleX(0.8);
+        songBox1.setScaleY(0.8);
+        songBox2.setStyle("-fx-background-color: darkgray;");
+        songBox2.setScaleX(0.9);
+        songBox2.setScaleY(0.9);
+        songBox3.setStyle("-fx-background-color: lightblue;");
+        songBox3.setScaleX(1);
+        songBox3.setScaleY(1);
+        songBox4.setStyle("-fx-background-color: darkgray;");
+        songBox4.setScaleX(0.9);
+        songBox4.setScaleY(0.9);
+        songBox5.setStyle("-fx-background-color: rgba(100,100,100,1);");
+        songBox5.setScaleX(0.8);
+        songBox5.setScaleY(0.8);
+        selector.getChildren().addAll(songBox1, songBox2, songBox3, songBox4, songBox5);
     }
 }

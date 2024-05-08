@@ -15,7 +15,7 @@ public class ScreenManager {
     private Scene scene = new Scene(root);
 
     public ScreenManager(Stage stage) {
-        this.stage = stage;
+        //this.stage = stage;
         root.setAlignment(Pos.CENTER);
         stage.setScene(scene);
         stage.setFullScreenExitHint("");
