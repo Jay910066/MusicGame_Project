@@ -3,19 +3,17 @@ package game;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class ScreenManager {
-    private Stage stage;
     private VBox root = new VBox();
     private Scene scene = new Scene(root);
 
     public ScreenManager(Stage stage) {
-        //this.stage = stage;
         root.setAlignment(Pos.CENTER);
         stage.setScene(scene);
         stage.setFullScreenExitHint("");
@@ -23,21 +21,27 @@ public class ScreenManager {
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     }
 
-    public void switchToMainMenu() {
-        MainMenu mainMenu = new MainMenu(this);
+    public void switchToMainMenu(int previousIndex) {
+        MainMenu mainMenu = new MainMenu(this, previousIndex);
         root.getChildren().clear();
         root.getChildren().add(mainMenu);
     }
 
-    public void switchToSettings(String previousScreen) {
-        Settings settings = new Settings(this, previousScreen);
+    public void switchToSettings(String previousScreen, int previousIndex) {
+        Settings settings = new Settings(this, previousScreen, previousIndex);
         root.getChildren().clear();
         root.getChildren().add(settings);
     }
 
-    public void switchToSongListMenu() {
-        SongListMenu songListMenu = new SongListMenu(this);
+    public void switchToSongListMenu(int previousIndex) {
+        SongListMenu songListMenu = new SongListMenu(this, previousIndex);
         root.getChildren().clear();
         root.getChildren().add(songListMenu);
+    }
+
+    public void switchToPlayGame(File selectedSong, int previousIndex) {
+        PlayGame playGame = new PlayGame(this, previousIndex, selectedSong);
+        root.getChildren().clear();
+        root.getChildren().add(playGame);
     }
 }

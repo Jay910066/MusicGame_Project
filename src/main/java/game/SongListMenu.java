@@ -9,9 +9,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -25,13 +29,15 @@ public class SongListMenu extends StackPane {
     private ImageView background;
     private ImageView songCover;
     private Text songNameText;
+    private Media selectedSong;
+    private MediaPlayer backgroundSongPlayer;
 
-    public SongListMenu(ScreenManager screenManager) {
+    public SongListMenu(ScreenManager screenManager, int previousIndex) {
         background = new ImageView();
         getChildren().add(background);
 
         ColorAdjust brightness = new ColorAdjust();
-        brightness.setBrightness(-0.5);
+        brightness.setBrightness(-0.1);
         background.setEffect(brightness);
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -48,7 +54,7 @@ public class SongListMenu extends StackPane {
         getChildren().add(root);
 
 
-
+        // Selector
         selector = new VBox();
         root.setRight(selector);
         selector.setFocusTraversable(true);
@@ -75,10 +81,6 @@ public class SongListMenu extends StackPane {
             songBoxes[i] = songBox;
         }
 
-        selectedIndex = 0;
-        selectItem(selectedIndex);
-        background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
-
         selector.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.UP) {
                 moveUp();
@@ -88,7 +90,7 @@ public class SongListMenu extends StackPane {
         });
 
 
-
+        // Detail Box
         VBox detailBox = new VBox();
         root.setLeft(detailBox);
         detailBox.setMinWidth(screenBounds.getWidth() / 4);
@@ -125,39 +127,68 @@ public class SongListMenu extends StackPane {
 
         ImageView backButton = new ImageView("file:Resources/Images/BackButton.png");
         buttonBox.getChildren().add(backButton);
-        backButton.setOnMouseClicked(e -> screenManager.switchToMainMenu());
+        backButton.setOnMouseClicked(e -> {
+            screenManager.switchToMainMenu(selectedIndex);
+            backgroundSongPlayer.stop();
+        });
 
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         buttonBox.getChildren().add(settingsButton);
-        settingsButton.setOnMouseClicked(e -> screenManager.switchToSettings("SongListMenu"));
+        settingsButton.setOnMouseClicked(e -> {
+            screenManager.switchToSettings("SongListMenu", selectedIndex);
+            backgroundSongPlayer.stop();
+        });
 
+        selectedIndex = previousIndex;
+        if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
+            background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
+        }else {
+            background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
+        }
+        selectedSong = new Media(new File(songList[selectedIndex], "song.mp3").toURI().toString());
+        backgroundSongPlayer = new MediaPlayer(selectedSong);
+        selectItem(selectedIndex);
 
+        songBoxes[selectedIndex].setOnMouseClicked(e -> {
+            screenManager.switchToPlayGame(songList[selectedIndex], selectedIndex);
+            backgroundSongPlayer.stop();
+        });
 
         this.setOnKeyPressed(e ->{
-            if(e.getCode() == KeyCode.ESCAPE)
-                screenManager.switchToMainMenu();
+            if(e.getCode() == KeyCode.ESCAPE) {
+                screenManager.switchToMainMenu(selectedIndex);
+                backgroundSongPlayer.stop();
+            }else if(e.getCode() == KeyCode.ENTER) {
+                screenManager.switchToPlayGame(songList[selectedIndex], selectedIndex);
+                backgroundSongPlayer.stop();
+            }
         });
     }
 
     private void moveUp() {
         selectedIndex = (selectedIndex - 1 + totalItems) % totalItems;
         selectItem(selectedIndex);
-        upDateSongInfo(selectedIndex);
     }
 
     private void moveDown() {
         selectedIndex = (selectedIndex + 1) % totalItems;
         selectItem(selectedIndex);
-        upDateSongInfo(selectedIndex);
-    }
-
-    private void upDateSongInfo(int index) {
-        background.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
-        songCover.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
-        songNameText.setText(songList[index].getName());
     }
 
     private void selectItem(int index) {
+        if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
+            background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
+        }else {
+            background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
+        }
+        songCover.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
+        songNameText.setText(songList[index].getName());
+        backgroundSongPlayer.stop();
+        selectedSong = new Media(new File(songList[index], "song.mp3").toURI().toString());
+        backgroundSongPlayer = new MediaPlayer(selectedSong);
+        backgroundSongPlayer.setStartTime(Duration.seconds(2));
+        backgroundSongPlayer.play();
+
         selector.getChildren().clear();
         HBox songBox1 = songBoxes[(index - 2 + totalItems) % totalItems];
         HBox songBox2 = songBoxes[(index - 1 + totalItems) % totalItems];

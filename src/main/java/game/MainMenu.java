@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class MainMenu extends VBox {
-    public MainMenu(ScreenManager screenManager) {
+    public MainMenu(ScreenManager screenManager, int previousIndex) {
         this.setAlignment(Pos.CENTER);
 
         ImageView mainTitle = new ImageView("file:Resources/Images/MainTitle.png");
@@ -26,8 +26,8 @@ public class MainMenu extends VBox {
         ImageView optionButton = new ImageView("file:Resources/Images/SettingsButton.png");
         Button exitButton = new Button("Exit");
 
-        playButton.setOnAction(e -> screenManager.switchToSongListMenu());
-        optionButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu"));
+        playButton.setOnAction(e -> screenManager.switchToSongListMenu(previousIndex));
+        optionButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu", previousIndex));
         exitButton.setOnAction(e -> System.exit(0));
 
         VBox mainMenu = new VBox();
