@@ -29,6 +29,8 @@ public class SongListMenu extends StackPane {
     private ImageView background;
     private ImageView songCover;
     private Text songNameText;
+    private Text artistText;
+    private Text creatorText;
     private Media selectedSong;
     private MediaPlayer previewSongPlayer;
 
@@ -67,9 +69,11 @@ public class SongListMenu extends StackPane {
         songList = songFolder.listFiles();
         totalItems = songList.length;
         songBoxes = new HBox[totalItems];
+        readOsu = new ReadOsu();
 
         for(int i = 0; i < totalItems; i++) {
-            Label songNameLabel = new Label(songList[i].getName());
+            readOsu.setSong(songList[i].getPath() + "/Info.osu");
+            Label songNameLabel = new Label(readOsu.getTitle());
             songNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 60;");
             HBox songBox = new HBox();
             songBox.setMinHeight(100);
@@ -88,9 +92,6 @@ public class SongListMenu extends StackPane {
                 moveDown();
             }
         });
-
-
-        readOsu = new ReadOsu(songList[selectedIndex].getPath() + "/Info.osu");
 
         // Detail Box
         VBox detailBox = new VBox();
@@ -114,13 +115,29 @@ public class SongListMenu extends StackPane {
         songInfo.setVgap(10);
         songInfo.setHgap(20);
 
-        Label songNameLabel = new Label(readOsu.getTitle());
+        Label songNameLabel = new Label("Song Name:");
         songInfo.add(songNameLabel, 0, 0);
         songNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
-        songNameText = new Text(songList[selectedIndex].getName());
+        songNameText = new Text(readOsu.getTitle());
         songInfo.add(songNameText, 1, 0);
         songNameText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
         songNameText.setFill(Color.WHITE);
+
+        Label artistLabel = new Label("Artist:");
+        songInfo.add(artistLabel, 0, 1);
+        artistLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
+        artistText = new Text(readOsu.getArtist());
+        songInfo.add(artistText, 1, 1);
+        artistText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
+        artistText.setFill(Color.WHITE);
+
+        Label creatorLabel = new Label("Creator:");
+        songInfo.add(creatorLabel, 0, 2);
+        creatorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
+        creatorText = new Text(readOsu.getCreator());
+        songInfo.add(creatorText, 1, 2);
+        creatorText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
+        creatorText.setFill(Color.WHITE);
 
         HBox buttonBox = new HBox();
         detailBox.getChildren().add(buttonBox);
@@ -178,13 +195,16 @@ public class SongListMenu extends StackPane {
     }
 
     private void selectItem(int index) {
+        readOsu.setSong(songList[index].getPath() + "/Info.osu");
         if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
         }else {
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
         }
         songCover.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
-        songNameText.setText(songList[index].getName());
+        songNameText.setText(readOsu.getTitle());
+        artistText.setText(readOsu.getArtist());
+        creatorText.setText(readOsu.getCreator());
         previewSongPlayer.stop();
         selectedSong = new Media(new File(songList[index], "song.mp3").toURI().toString());
         previewSongPlayer = new MediaPlayer(selectedSong);

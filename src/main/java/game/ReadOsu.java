@@ -11,7 +11,32 @@ public class ReadOsu {
     private String Artist;
     private String Creator;
 
+    ReadOsu() {
+        PreviewTime = "";
+        Title = "";
+        Artist = "";
+        Creator = "";
+    }
+
     ReadOsu(String path) {
+        setSong(path);
+    }
+
+    private void readLine(String line) {
+        line = line.replace(" ", "");
+
+        if(line.startsWith("PreviewTime:")) {
+            PreviewTime = line.substring(12);
+        } else if(line.startsWith("TitleUnicode:")) {
+            Title = line.substring(13);
+        } else if(line.startsWith("ArtistUnicode:")) {
+            Artist = line.substring(14);
+        } else if(line.startsWith("Creator:")) {
+            Creator = line.substring(8);
+        }
+    }
+
+    public void setSong(String path) {
         File osuFile = new File(path);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(osuFile));
@@ -22,20 +47,6 @@ public class ReadOsu {
             reader.close();
         } catch(IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void readLine(String line) {
-        line = line.replace(" ", "");
-
-        if(line.startsWith("PreviewTime:")) {
-            PreviewTime = line.substring(12);
-        } else if(line.startsWith("Title:")) {
-            Title = line.substring(6);
-        } else if(line.startsWith("Artist:")) {
-            Artist = line.substring(7);
-        } else if(line.startsWith("Creator:")) {
-            Creator = line.substring(8);
         }
     }
 
