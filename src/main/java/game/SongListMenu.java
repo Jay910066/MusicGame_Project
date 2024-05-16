@@ -11,7 +11,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
@@ -26,11 +25,12 @@ public class SongListMenu extends StackPane {
     private int totalItems;
     private HBox[] songBoxes;
     private File[] songList;
+    private ReadOsu readOsu;
     private ImageView background;
     private ImageView songCover;
     private Text songNameText;
     private Media selectedSong;
-    private MediaPlayer backgroundSongPlayer;
+    private MediaPlayer previewSongPlayer;
 
     public SongListMenu(ScreenManager screenManager, int previousIndex) {
         background = new ImageView();
@@ -90,6 +90,8 @@ public class SongListMenu extends StackPane {
         });
 
 
+        readOsu = new ReadOsu(songList[selectedIndex].getPath() + "/Info.osu");
+
         // Detail Box
         VBox detailBox = new VBox();
         root.setLeft(detailBox);
@@ -112,7 +114,7 @@ public class SongListMenu extends StackPane {
         songInfo.setVgap(10);
         songInfo.setHgap(20);
 
-        Label songNameLabel = new Label("Song Name:");
+        Label songNameLabel = new Label(readOsu.getTitle());
         songInfo.add(songNameLabel, 0, 0);
         songNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
         songNameText = new Text(songList[selectedIndex].getName());
@@ -129,14 +131,14 @@ public class SongListMenu extends StackPane {
         buttonBox.getChildren().add(backButton);
         backButton.setOnMouseClicked(e -> {
             screenManager.switchToMainMenu(selectedIndex);
-            backgroundSongPlayer.stop();
+            previewSongPlayer.stop();
         });
 
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         buttonBox.getChildren().add(settingsButton);
         settingsButton.setOnMouseClicked(e -> {
             screenManager.switchToSettings("SongListMenu", selectedIndex);
-            backgroundSongPlayer.stop();
+            previewSongPlayer.stop();
         });
 
         selectedIndex = previousIndex;
@@ -146,21 +148,21 @@ public class SongListMenu extends StackPane {
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
         }
         selectedSong = new Media(new File(songList[selectedIndex], "song.mp3").toURI().toString());
-        backgroundSongPlayer = new MediaPlayer(selectedSong);
+        previewSongPlayer = new MediaPlayer(selectedSong);
         selectItem(selectedIndex);
 
         songBoxes[selectedIndex].setOnMouseClicked(e -> {
-            screenManager.switchToPlayGame(songList[selectedIndex], selectedIndex);
-            backgroundSongPlayer.stop();
+            screenManager.switchToGamePlay(songList[selectedIndex], selectedIndex);
+            previewSongPlayer.stop();
         });
 
         this.setOnKeyPressed(e ->{
             if(e.getCode() == KeyCode.ESCAPE) {
                 screenManager.switchToMainMenu(selectedIndex);
-                backgroundSongPlayer.stop();
+                previewSongPlayer.stop();
             }else if(e.getCode() == KeyCode.ENTER) {
-                screenManager.switchToPlayGame(songList[selectedIndex], selectedIndex);
-                backgroundSongPlayer.stop();
+                screenManager.switchToGamePlay(songList[selectedIndex], selectedIndex);
+                previewSongPlayer.stop();
             }
         });
     }
@@ -183,11 +185,11 @@ public class SongListMenu extends StackPane {
         }
         songCover.setImage(new Image("file:" + songList[index].getPath() + "/cover.jpg"));
         songNameText.setText(songList[index].getName());
-        backgroundSongPlayer.stop();
+        previewSongPlayer.stop();
         selectedSong = new Media(new File(songList[index], "song.mp3").toURI().toString());
-        backgroundSongPlayer = new MediaPlayer(selectedSong);
-        backgroundSongPlayer.setStartTime(Duration.seconds(2));
-        backgroundSongPlayer.play();
+        previewSongPlayer = new MediaPlayer(selectedSong);
+        previewSongPlayer.setStartTime(Duration.millis(readOsu.getPreviewTime()));
+        previewSongPlayer.play();
 
         selector.getChildren().clear();
         HBox songBox1 = songBoxes[(index - 2 + totalItems) % totalItems];

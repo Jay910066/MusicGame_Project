@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -39,9 +38,9 @@ public class ScreenManager {
         root.getChildren().add(songListMenu);
     }
 
-    public void switchToPlayGame(File selectedSong, int previousIndex) {
-        PlayGame playGame = new PlayGame(this, previousIndex, selectedSong);
+    public void switchToGamePlay(File selectedSong, int previousIndex) {
+        GamePlay gamePlay = new GamePlay(this, previousIndex, selectedSong);
         root.getChildren().clear();
-        root.getChildren().add(playGame);
+        root.getChildren().add(gamePlay);
     }
 }
