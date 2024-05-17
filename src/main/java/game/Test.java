@@ -50,7 +50,7 @@ public class Test extends Application {
         System.out.println(songs[0].getPath()+ "/cover.jpg");
 
         selectedIndex = 0;
-        selectItem(selectedIndex, "d");
+        selectItem(selectedIndex, 0);
 
         Scene scene = new Scene(container, 200, 300);
         scene.setOnKeyPressed(event -> {
@@ -68,16 +68,16 @@ public class Test extends Application {
 
     private void moveUp() {
         selectedIndex = (selectedIndex - 1 + totalItems) % totalItems;
-        selectItem(selectedIndex, "Up");
+        selectItem(selectedIndex, 1);
     }
 
     private void moveDown() {
         selectedIndex = (selectedIndex + 1) % totalItems;
-        selectItem(selectedIndex, "Down");
+        selectItem(selectedIndex, -1);
     }
 
-    private PathTransition createTransition(HBox songBox, int index){
-        Line path = new Line(songBox.getLayoutX(), 0, songBox.getLayoutX(), 50);
+    private PathTransition createTransition(HBox songBox, int direction){
+        Line path = new Line(songBox.getLayoutX(), songBox.getLayoutY(), songBox.getLayoutX(), songBox.getLayoutY() - (direction * 10));
         PathTransition transition = new PathTransition();
         transition.setDuration(Duration.millis(200));
         transition.setPath(path);
@@ -85,30 +85,28 @@ public class Test extends Application {
         return transition;
     }
 
-    private void selectItem(int index, String direction) {
+    private void selectItem(int index, int direction) {
+        container.getChildren().clear();
 
         HBox songBox0 = songBoxes[(index - 3 + totalItems) % totalItems];
-        PathTransition transition0 = createTransition(songBox0, 0);
-        transition0.play();
-        HBox songBox1 = songBoxes[(index - 2 + totalItems) % totalItems];
-        PathTransition transition1 = createTransition(songBox0, 0);
-        transition1.play();
-        HBox songBox2 = songBoxes[(index - 1 + totalItems) % totalItems];
-        PathTransition transition2 = createTransition(songBox0, 0);
-        transition2.play();
-        HBox songBox3 = songBoxes[index];
-        PathTransition transition3 = createTransition(songBox0, 0);
-        transition3.play();
-        HBox songBox4 = songBoxes[(index + 1) % totalItems];
-        PathTransition transition4 = createTransition(songBox0, 0);
-        transition4.play();
-        HBox songBox5 = songBoxes[(index + 2) % totalItems];
-        PathTransition transition5 = createTransition(songBox0, 0);
-        transition5.play();
-        HBox songBox6 = songBoxes[(index + 3) % totalItems];
-        PathTransition transition6 = createTransition(songBox0, 0);
-        transition6.play();
 
+        HBox songBox1 = songBoxes[(index - 2 + totalItems) % totalItems];
+
+        HBox songBox2 = songBoxes[(index - 1 + totalItems) % totalItems];
+
+        HBox songBox3 = songBoxes[index];
+        PathTransition transition3 = createTransition(songBox3, direction);
+        transition3.play();
+
+        HBox songBox4 = songBoxes[(index + 1) % totalItems];
+
+        HBox songBox5 = songBoxes[(index + 2) % totalItems];
+
+        HBox songBox6 = songBoxes[(index + 3) % totalItems];
+
+        songBox0.setStyle("-fx-background-color: darkgray;");
+        songBox0.setScaleX(0.7);
+        songBox0.setScaleY(0.7);
         songBox1.setStyle("-fx-background-color: darkgray;");
         songBox1.setScaleX(0.8);
         songBox1.setScaleY(0.8);
@@ -124,8 +122,11 @@ public class Test extends Application {
         songBox5.setStyle("-fx-background-color: darkgray;");
         songBox5.setScaleX(0.8);
         songBox5.setScaleY(0.8);
+        songBox6.setStyle("-fx-background-color: darkgray;");
+        songBox6.setScaleX(0.7);
+        songBox6.setScaleY(0.7);
 
-        container.getChildren().addAll(songBox1, songBox2, songBox3, songBox4, songBox5);
+        container.getChildren().addAll(songBox0, songBox1, songBox2, songBox3, songBox4, songBox5, songBox6);
     }
 
     public static void main(String[] args) {
