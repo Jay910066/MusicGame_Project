@@ -1,21 +1,55 @@
 package game;
 
-public class Note {
+import javafx.scene.image.ImageView;
+
+public abstract class Note {
     private int track;
-    private int time;
-    private int type;
-    private int endTime;
+    private int bornTime;
+    private double deltaTime;
+    private int hitTime;
+    private boolean hit = false;
+    private boolean kill = false;
+    private ImageView noteImage;
 
-    Note(int track, int time, int type) {
+    Note(int track, int hitTime) {
         this.track = track;
-        this.time = time;
-        this.type = type;
+        this.hitTime = hitTime;
+        deltaTime = 5000;
+        bornTime = hitTime - (int)(deltaTime / Settings.flowSpeed);
     }
 
-    Note(int track, int time, int type, int endTime) {
-        this.track = track;
-        this.time = time;
-        this.type = type;
-        this.endTime = endTime;
-    }
+    public int getTrack(){
+        return track;
+    };
+    public int getHitTime(){
+        return hitTime;
+    };
+
+    public int getBornTime(){
+        return bornTime;
+    };
+
+    public void OnHitCheck(){
+
+    };
+
+    public void hit(){
+        hit = true;
+    };
+
+    public boolean isHit(){
+        return hit;
+    };
+
+    public void kill(){
+        kill = true;
+    };
+
+    public boolean isDead(){
+        return kill;
+    };
+
+    public ImageView getNoteImage(){
+        return noteImage;
+    };
 }

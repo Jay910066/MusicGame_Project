@@ -18,8 +18,10 @@ import javafx.util.Duration;
 
 import java.io.File;
 
+/**
+ * 歌曲列表畫面
+ */
 public class SongListMenu extends StackPane {
-
     private VBox selector;
     private int selectedIndex;
     private int totalItems;
@@ -33,7 +35,11 @@ public class SongListMenu extends StackPane {
     private Text creatorText;
     private Media selectedSong;
     private MediaPlayer previewSongPlayer;
-
+    /**
+     * 歌曲列表畫面
+     * @param screenManager 畫面管理器
+     * @param previousIndex 歌曲索引，紀錄之前停留在哪首歌曲
+     */
     public SongListMenu(ScreenManager screenManager, int previousIndex) {
         background = new ImageView();
         getChildren().add(background);

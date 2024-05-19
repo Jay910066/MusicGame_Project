@@ -16,8 +16,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
+/**
+ * 主畫面
+ */
 public class MainMenu extends VBox {
+    /**
+     * 主畫面
+     * @param screenManager 畫面管理器
+     * @param previousIndex 歌曲索引，紀錄之前停留在哪首歌曲
+     */
     public MainMenu(ScreenManager screenManager, int previousIndex) {
         this.setAlignment(Pos.CENTER);
 
