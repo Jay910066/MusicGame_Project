@@ -15,9 +15,9 @@ public class Slider extends Note{
         super(track, hitTime);
         this.endTime = endTime;
         if (track == 0 || track == 3) {
-            this.setImage(new Image("file:src/main/resources/side.png"));
+            this.setImage(new Image("file:Resources/Images/side.png"));
         } else if (track == 1 || track == 2) {
-            this.setImage(new Image("file:src/main/resources/middle.png"));
+            this.setImage(new Image("file:Resources/Images/side.png"));
         }
     }
 

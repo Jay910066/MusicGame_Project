@@ -22,8 +22,9 @@ import java.io.File;
  * 歌曲列表畫面
  */
 public class SongListMenu extends StackPane {
+    public static int selectedIndex = 0;
+
     private VBox selector;
-    private int selectedIndex;
     private int totalItems;
     private HBox[] songBoxes;
     private File[] songList;
@@ -38,9 +39,8 @@ public class SongListMenu extends StackPane {
     /**
      * 歌曲列表畫面
      * @param screenManager 畫面管理器
-     * @param previousIndex 歌曲索引，紀錄之前停留在哪首歌曲
      */
-    public SongListMenu(ScreenManager screenManager, int previousIndex) {
+    public SongListMenu(ScreenManager screenManager) {
         background = new ImageView();
         getChildren().add(background);
 
@@ -153,18 +153,17 @@ public class SongListMenu extends StackPane {
         ImageView backButton = new ImageView("file:Resources/Images/BackButton.png");
         buttonBox.getChildren().add(backButton);
         backButton.setOnMouseClicked(e -> {
-            screenManager.switchToMainMenu(selectedIndex);
+            screenManager.switchToMainMenu();
             previewSongPlayer.stop();
         });
 
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         buttonBox.getChildren().add(settingsButton);
         settingsButton.setOnMouseClicked(e -> {
-            screenManager.switchToSettings("SongListMenu", selectedIndex);
+            screenManager.switchToSettings("SongListMenu");
             previewSongPlayer.stop();
         });
 
-        selectedIndex = previousIndex;
         if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
         }else {
@@ -175,16 +174,16 @@ public class SongListMenu extends StackPane {
         selectItem(selectedIndex);
 
         songBoxes[selectedIndex].setOnMouseClicked(e -> {
-            screenManager.switchToGamePlay(songList[selectedIndex], selectedIndex);
+            screenManager.switchToGamePlay(songList[selectedIndex]);
             previewSongPlayer.stop();
         });
 
         this.setOnKeyPressed(e ->{
             if(e.getCode() == KeyCode.ESCAPE) {
-                screenManager.switchToMainMenu(selectedIndex);
+                screenManager.switchToMainMenu();
                 previewSongPlayer.stop();
             }else if(e.getCode() == KeyCode.ENTER) {
-                screenManager.switchToGamePlay(songList[selectedIndex], selectedIndex);
+                screenManager.switchToGamePlay(songList[selectedIndex]);
                 previewSongPlayer.stop();
             }
         });

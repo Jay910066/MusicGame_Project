@@ -23,9 +23,8 @@ public class MainMenu extends VBox {
     /**
      * 主畫面
      * @param screenManager 畫面管理器
-     * @param previousIndex 歌曲索引，紀錄之前停留在哪首歌曲
      */
-    public MainMenu(ScreenManager screenManager, int previousIndex) {
+    public MainMenu(ScreenManager screenManager) {
         this.setAlignment(Pos.CENTER);
 
         ImageView mainTitle = new ImageView("file:Resources/Images/MainTitle.png");
@@ -33,8 +32,8 @@ public class MainMenu extends VBox {
         ImageView optionButton = new ImageView("file:Resources/Images/SettingsButton.png");
         Button exitButton = new Button("Exit");
 
-        playButton.setOnAction(e -> screenManager.switchToSongListMenu(previousIndex));
-        optionButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu", previousIndex));
+        playButton.setOnAction(e -> screenManager.switchToSongListMenu());
+        optionButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu"));
         exitButton.setOnAction(e -> System.exit(0));
 
         VBox mainMenu = new VBox();

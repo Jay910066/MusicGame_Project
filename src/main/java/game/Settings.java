@@ -82,9 +82,9 @@ public class Settings extends VBox {
      */
     private void goBack() {
         if(previousScreen.equals("MainMenu")) {
-            screenManager.switchToMainMenu(previousIndex);
+            screenManager.switchToMainMenu();
         } else if(previousScreen.equals("SongListMenu")) {
-            screenManager.switchToSongListMenu(previousIndex);
+            screenManager.switchToSongListMenu();
         }
     }
 

@@ -6,14 +6,15 @@ import javafx.stage.Stage;
  * 啟動遊戲
  */
 public class RhythmGame extends Application {
-    Settings settings;
+    public static final int defaultFlowTime = 3;
+    private Settings settings;
 
     ScreenManager screenManager;
     public void start(Stage primaryStage) {
         screenManager = new ScreenManager(primaryStage, settings); // 建立畫面管理器
         settings = new Settings(screenManager, "MainMenu", 0); // 建立設定畫面
         screenManager.setSettings(settings);
-        screenManager.switchToMainMenu(0); // 進入主畫面
+        screenManager.switchToMainMenu(); // 進入主畫面
         primaryStage.setTitle("Rhythm Game");
         primaryStage.show();
     }

@@ -15,8 +15,10 @@ public abstract class Note extends ImageView{
     Note(int track, int hitTime) {
         this.track = track;
         this.hitTime = hitTime;
-        deltaTime = 5000;
+        deltaTime = RhythmGame.defaultFlowTime * 1000;
         bornTime = hitTime - (int)(deltaTime / Settings.flowSpeed);
+        this.setScaleX(0.5);
+        this.setScaleY(0.5);
     }
 
     public int getTrack(){

@@ -1,5 +1,8 @@
 package game;
 
+import javafx.animation.AnimationTimer;
+import javafx.animation.Interpolator;
+import javafx.animation.PathTransition;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
@@ -25,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class GamePlay extends Pane {
     private ScreenManager screenManager;
-    private int selectedIndex;
     private File selectedSong;
     private double centerX;
     private double centerY;
@@ -33,16 +35,18 @@ public class GamePlay extends Pane {
     private ImageView PlayField;
     private Timer timer;
     private BeatMap beatMap;
-
+    private Line[] tracks = new Line[4];
+    private long startTime;
+    private boolean isPaused = false;
+    private AnimationTimer gameLoop;
+    private Text gameTimer;
     /**
      * 遊戲畫面
      * @param screenManager 畫面管理器
-     * @param selectedIndex 歌曲索引，紀錄之前停留在哪首歌曲
      * @param selectedSong 選擇的歌曲
      */
-    public GamePlay(ScreenManager screenManager, int selectedIndex, File selectedSong) {
+    public GamePlay(ScreenManager screenManager, File selectedSong) {
         this.screenManager = screenManager;
-        this.selectedIndex = selectedIndex;
         this.selectedSong = selectedSong;
         centerX = Screen.getPrimary().getVisualBounds().getWidth() / 2;
         centerY = Screen.getPrimary().getVisualBounds().getHeight() / 2;
@@ -66,11 +70,12 @@ public class GamePlay extends Pane {
         PlayField.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
-        Line trackD = new Line(centerX - 300, 0, centerX - 300, centerY * 2);
-        Line trackF = new Line(centerX - 100, 0, centerX - 100, centerY * 2);
-        Line trackJ = new Line(centerX + 100, 0, centerX + 100, centerY * 2);
-        Line trackK = new Line(centerX + 300, 0, centerX + 300, centerY * 2);
-        getChildren().addAll(trackD, trackF, trackJ, trackK);
+        tracks[0] = new Line(620, 115, -180, 885);
+        tracks[1] = new Line(640, 135, 290, 1615);
+        tracks[2] = new Line(680, 135, 1030, 1615);
+        tracks[3] = new Line(700, 115, 1500, 885);
+
+        getChildren().addAll(tracks);
 
         beatMap = readOsu.getBeatMap();
 
@@ -79,30 +84,47 @@ public class GamePlay extends Pane {
         songPlayer.setOnReady(() -> {
             songPlayer.play();
             timer = new Timer();
+            startTime = System.nanoTime();
+            /*-----Update Test-----*/
+
+            gameLoop = new AnimationTimer(){
+
+                @Override
+                public void handle(long now) {
+                    if(isPaused){
+                        return;
+                    }
+
+                    int gameTime = (int) ((now - startTime) / 1_000_000);
+                    update(gameTime);
+                }
+            };
+            gameLoop.start();
+
+            /*-----Update Test-----*/
         });
+
+        gameTimer = new Text("Time: " + 0);
+        gameTimer.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        gameTimer.setLayoutX(centerX - 100);
+        gameTimer.setLayoutY(centerY - 300);
+        getChildren().add(gameTimer);
+
         AtomicBoolean exit = new AtomicBoolean(false);
-        AtomicBoolean pause = new AtomicBoolean(false);
-
-        ArrayList<Note> track1 = beatMap.getTrack(0).getNotes();
-        getChildren().addAll(track1.get(0));
-
-        //while(!exit.get()){
-        //
-        //}
 
         LeaveWindow leaveWindow = new LeaveWindow();
         leaveWindow.confirmButton.setOnAction(event -> {
             exit.set(true);
-            screenManager.switchToSongListMenu(selectedIndex);
+            screenManager.switchToSongListMenu();
         });
         leaveWindow.retryButton.setOnAction(event -> {
             getChildren().remove(leaveWindow);
-            screenManager.switchToGamePlay(selectedSong, selectedIndex);
+            screenManager.switchToGamePlay(selectedSong);
         });
         leaveWindow.continueButton.setOnAction(event -> {
             getChildren().remove(leaveWindow);
             songPlayer.play();
-            pause.set(false);
+            isPaused = false;
             timer.resume();
         });
 
@@ -141,10 +163,47 @@ public class GamePlay extends Pane {
                     leaveWindow.setLayoutX(centerX - 400);
                     leaveWindow.setLayoutY(centerY - 300);
                     songPlayer.pause();
-                    pause.set(true);
+                    isPaused = true;
                     timer.pause();
                 }
             }
+        });
+    }
+
+    private void update(int gameTime){
+        if(gameTime > beatMap.getTrack(0).getNotes().get(0).getBornTime()){
+            getChildren().add(beatMap.getTrack(0).getNotes().get(0));
+            notefall(beatMap.getTrack(0).getNotes().get(0), tracks[0]);
+            beatMap.getTrack(0).getNotes().remove(0);
+        }
+        if(gameTime > beatMap.getTrack(1).getNotes().get(0).getBornTime()){
+            getChildren().add(beatMap.getTrack(1).getNotes().get(0));
+            notefall(beatMap.getTrack(1).getNotes().get(0), tracks[1]);
+            beatMap.getTrack(1).getNotes().remove(0);
+        }
+        if(gameTime > beatMap.getTrack(2).getNotes().get(0).getBornTime()){
+            getChildren().add(beatMap.getTrack(2).getNotes().get(0));
+            notefall(beatMap.getTrack(2).getNotes().get(0), tracks[2]);
+            beatMap.getTrack(2).getNotes().remove(0);
+        }
+        if(gameTime > beatMap.getTrack(3).getNotes().get(0).getBornTime()){
+            getChildren().add(beatMap.getTrack(3).getNotes().get(0));
+            notefall(beatMap.getTrack(3).getNotes().get(0), tracks[3]);
+            beatMap.getTrack(3).getNotes().remove(0);
+        }
+        gameTimer.setText("Time: " + gameTime);
+    }
+
+    private void notefall(Note note, Line track){
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setNode(note);
+        pathTransition.setPath(track);
+        pathTransition.setDuration(javafx.util.Duration.seconds(RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed));
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+        pathTransition.play();
+
+        pathTransition.setOnFinished(e -> {
+            getChildren().remove(note);
         });
     }
 
