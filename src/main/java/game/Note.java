@@ -1,8 +1,9 @@
 package game;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public abstract class Note {
+public abstract class Note extends ImageView{
     private int track;
     private int bornTime;
     private double deltaTime;
@@ -49,7 +50,7 @@ public abstract class Note {
         return kill;
     };
 
-    public ImageView getNoteImage(){
+    public ImageView getImageView(){
         return noteImage;
     };
 }

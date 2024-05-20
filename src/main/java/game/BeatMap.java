@@ -7,6 +7,9 @@ public class BeatMap {
 
     public BeatMap() {
         tracks = new ArrayList<Track>(4);
+        for(int i = 0; i < 4; i++) {
+            tracks.add(new Track());
+        }
     }
 
     public void pause(){

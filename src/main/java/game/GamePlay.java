@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -82,9 +83,12 @@ public class GamePlay extends Pane {
         AtomicBoolean exit = new AtomicBoolean(false);
         AtomicBoolean pause = new AtomicBoolean(false);
 
-        while(!exit.get()){
+        ArrayList<Note> track1 = beatMap.getTrack(0).getNotes();
+        getChildren().addAll(track1.get(0));
 
-        }
+        //while(!exit.get()){
+        //
+        //}
 
         LeaveWindow leaveWindow = new LeaveWindow();
         leaveWindow.confirmButton.setOnAction(event -> {

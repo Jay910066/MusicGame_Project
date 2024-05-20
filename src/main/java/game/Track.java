@@ -6,7 +6,7 @@ public class Track {
     private ArrayList<Note> notes;
 
     public Track() {
-
+        notes = new ArrayList<Note>();
     }
 
     public ArrayList<Note> getNotes() {
