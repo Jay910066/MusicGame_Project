@@ -3,6 +3,7 @@ package game;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
+import javafx.animation.ScaleTransition;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
@@ -21,6 +22,7 @@ import javafx.stage.Screen;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -37,9 +39,12 @@ public class GamePlay extends Pane {
     private BeatMap beatMap;
     private Line[] tracks = new Line[4];
     private long startTime;
+    private long pauseTime;
     private boolean isPaused = false;
     private AnimationTimer gameLoop;
     private Text gameTimer;
+    private List<PathTransition> pathTransitions = new ArrayList<>();
+    private List<ScaleTransition> scaleTransitions = new ArrayList<>();
     /**
      * 遊戲畫面
      * @param screenManager 畫面管理器
@@ -125,7 +130,14 @@ public class GamePlay extends Pane {
             getChildren().remove(leaveWindow);
             songPlayer.play();
             isPaused = false;
+            startTime += System.nanoTime() - pauseTime;
             timer.resume();
+            for(PathTransition pathTransition : pathTransitions){
+                pathTransition.play();
+            }
+            for(ScaleTransition scaleTransition : scaleTransitions){
+                scaleTransition.play();
+            }
         });
 
         Text Dtime = new Text("D:");
@@ -164,6 +176,13 @@ public class GamePlay extends Pane {
                     leaveWindow.setLayoutY(centerY - 300);
                     songPlayer.pause();
                     isPaused = true;
+                    for(PathTransition pathTransition : pathTransitions){
+                        pathTransition.pause();
+                    }
+                    for(ScaleTransition scaleTransition : scaleTransitions){
+                        scaleTransition.pause();
+                    }
+                    pauseTime = System.nanoTime();
                     timer.pause();
                 }
             }
@@ -171,24 +190,28 @@ public class GamePlay extends Pane {
     }
 
     private void update(int gameTime){
-        if(gameTime > beatMap.getTrack(0).getNotes().get(0).getBornTime()){
-            getChildren().add(beatMap.getTrack(0).getNotes().get(0));
-            notefall(beatMap.getTrack(0).getNotes().get(0), tracks[0]);
+        Note trackDNote = beatMap.getTrack(0).getNotes().get(0);
+        Note trackFNote = beatMap.getTrack(1).getNotes().get(0);
+        Note trackJNote = beatMap.getTrack(2).getNotes().get(0);
+        Note trackKNote = beatMap.getTrack(3).getNotes().get(0);
+        if(gameTime > trackDNote.getBornTime()){
+            notefall(trackDNote, tracks[0]);
+            getChildren().add(trackDNote);
             beatMap.getTrack(0).getNotes().remove(0);
         }
-        if(gameTime > beatMap.getTrack(1).getNotes().get(0).getBornTime()){
-            getChildren().add(beatMap.getTrack(1).getNotes().get(0));
-            notefall(beatMap.getTrack(1).getNotes().get(0), tracks[1]);
+        if(gameTime > trackFNote.getBornTime()){
+            notefall(trackFNote, tracks[1]);
+            getChildren().add(trackFNote);
             beatMap.getTrack(1).getNotes().remove(0);
         }
-        if(gameTime > beatMap.getTrack(2).getNotes().get(0).getBornTime()){
-            getChildren().add(beatMap.getTrack(2).getNotes().get(0));
-            notefall(beatMap.getTrack(2).getNotes().get(0), tracks[2]);
+        if(gameTime > trackJNote.getBornTime()){
+            notefall(trackJNote, tracks[2]);
+            getChildren().add(trackJNote);
             beatMap.getTrack(2).getNotes().remove(0);
         }
-        if(gameTime > beatMap.getTrack(3).getNotes().get(0).getBornTime()){
-            getChildren().add(beatMap.getTrack(3).getNotes().get(0));
-            notefall(beatMap.getTrack(3).getNotes().get(0), tracks[3]);
+        if(gameTime > trackKNote.getBornTime()){
+            notefall(trackKNote, tracks[3]);
+            getChildren().add(trackKNote);
             beatMap.getTrack(3).getNotes().remove(0);
         }
         gameTimer.setText("Time: " + gameTime);
@@ -199,11 +222,28 @@ public class GamePlay extends Pane {
         pathTransition.setNode(note);
         pathTransition.setPath(track);
         pathTransition.setDuration(javafx.util.Duration.seconds(RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed));
-        pathTransition.setInterpolator(Interpolator.LINEAR);
+        pathTransition.setInterpolator(new NoteFallInterpolation());
         pathTransition.play();
+
+        pathTransitions.add(pathTransition);
+
+        ScaleTransition scaleTransition = new ScaleTransition();
+        scaleTransition.setNode(note);
+        scaleTransition.setDuration(javafx.util.Duration.seconds(RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed));
+        scaleTransition.setInterpolator(new NoteFallInterpolation());
+        scaleTransition.setFromX(0.12);
+        scaleTransition.setFromY(0.12);
+        scaleTransition.setToX(2);
+        scaleTransition.setToY(2);
+        scaleTransition.play();
+
+        scaleTransitions.add(scaleTransition);
 
         pathTransition.setOnFinished(e -> {
             getChildren().remove(note);
+
+            pathTransitions.remove(pathTransition);
+            scaleTransitions.remove(scaleTransition);
         });
     }
 
@@ -249,6 +289,13 @@ public class GamePlay extends Pane {
 
             this.getChildren().addAll(message, confirmButton, retryButton, continueButton);
             this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        }
+    }
+
+    public static class NoteFallInterpolation extends Interpolator {
+        @Override
+        protected double curve(double t) {
+            return 2 * t * t;
         }
     }
 }

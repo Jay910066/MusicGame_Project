@@ -14,10 +14,14 @@ public class Slider extends Note{
     Slider(int track, int hitTime, int endTime) {
         super(track, hitTime);
         this.endTime = endTime;
-        if (track == 0 || track == 3) {
-            this.setImage(new Image("file:Resources/Images/side.png"));
-        } else if (track == 1 || track == 2) {
-            this.setImage(new Image("file:Resources/Images/side.png"));
+        if (track == 0) {
+            this.setImage(new Image("file:Resources/Images/Left_side.png"));
+        } else if (track == 1) {
+            this.setImage(new Image("file:Resources/Images/Left_middle.png"));
+        }else if(track == 2){
+            this.setImage(new Image("file:Resources/Images/Right_middle.png"));
+        }else if(track == 3) {
+            this.setImage(new Image("file:Resources/Images/Right_side.png"));
         }
     }
 
