@@ -25,6 +25,8 @@ public class Settings extends VBox {
     private String previousScreen;
     private int previousIndex;
     private File[] songList;
+    private Media backgroundSong;
+    private MediaPlayer backgroundSongPlayer;
     /**
      * 設定畫面
      * @param screenManager 畫面管理器
@@ -76,8 +78,8 @@ public class Settings extends VBox {
         
         File songFolder = new File("Resources/Songs");
         songList = songFolder.listFiles();
-        Media backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
-        MediaPlayer backgroundSongPlayer = new MediaPlayer(backgroundSong);
+        backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
+        backgroundSongPlayer = new MediaPlayer(backgroundSong);
         Label volumeLabel = new Label("Volume:");
         Slider volumeSlider = new Slider();
         volumeSlider.setPrefWidth(200);
