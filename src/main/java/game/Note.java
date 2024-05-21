@@ -1,22 +1,21 @@
 package game;
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public abstract class Note extends ImageView{
     private int track;
     private int bornTime;
-    private double deltaTime;
+    private double delayTime;
     private int hitTime;
     private boolean hit = false;
-    private boolean kill = false;
+    private boolean miss = false;
     private ImageView noteImage;
 
     Note(int track, int hitTime) {
         this.track = track;
         this.hitTime = hitTime;
-        deltaTime = RhythmGame.defaultFlowTime * 1000;
-        bornTime = hitTime - (int)(deltaTime / Settings.flowSpeed);
+        delayTime = RhythmGame.defaultFlowTime * 1000;
+        bornTime = hitTime - (int)(delayTime / Settings.flowSpeed);
         this.setScaleX(0.5);
         this.setScaleY(0.5);
     }
@@ -32,8 +31,28 @@ public abstract class Note extends ImageView{
         return bornTime;
     };
 
-    public void OnHitCheck(){
-
+    public Judge OnHitCheck(int pressTime){
+        int deltaTime = pressTime - hitTime;
+        if(deltaTime <= RhythmGame.acceptableRange) {
+            hit();
+            if(deltaTime > 80){
+                return Judge.Fast_BAD;
+            }
+            if(deltaTime > 50){
+                return Judge.Fast_GOOD;
+            }else if(deltaTime > 16){
+                return Judge.Fast_GREAT;
+            }else if(deltaTime >= -16){
+                return Judge.PERFECT;
+            }else if(deltaTime > -50){
+                return Judge.Late_GREAT;
+            }else if(deltaTime > -80){
+                return Judge.Late_GOOD;
+            }else if(deltaTime > -RhythmGame.acceptableRange) {
+                return Judge.Late_BAD;
+            }
+        }
+        return Judge.NONE;
     };
 
     public void hit(){
@@ -44,12 +63,12 @@ public abstract class Note extends ImageView{
         return hit;
     };
 
-    public void kill(){
-        kill = true;
+    public void miss(){
+        miss = true;
     };
 
-    public boolean isDead(){
-        return kill;
+    public boolean isMiss(){
+        return miss;
     };
 
     public ImageView getImageView(){

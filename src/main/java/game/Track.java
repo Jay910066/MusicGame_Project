@@ -16,4 +16,8 @@ public class Track {
     public void addNote(Note note) {
         notes.add(note);
     }
+
+    public void removeNote() {
+        notes.remove(0);
+    }
 }

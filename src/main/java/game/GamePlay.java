@@ -14,8 +14,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
@@ -38,6 +40,7 @@ public class GamePlay extends Pane {
     private Timer timer;
     private BeatMap beatMap;
     private Line[] tracks = new Line[4];
+    private ArrayList<Track> bornedNotes;
     private long startTime;
     private long pauseTime;
     private boolean isPaused = false;
@@ -45,6 +48,7 @@ public class GamePlay extends Pane {
     private Text gameTimer;
     private List<PathTransition> pathTransitions = new ArrayList<>();
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
+    private InputManager inputManager = new InputManager(this);
     /**
      * 遊戲畫面
      * @param screenManager 畫面管理器
@@ -83,6 +87,11 @@ public class GamePlay extends Pane {
         getChildren().addAll(tracks);
 
         beatMap = readOsu.getBeatMap();
+
+        bornedNotes = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            bornedNotes.add(new Track());
+        }
 
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
         MediaPlayer songPlayer = new MediaPlayer(playSong);
@@ -140,34 +149,55 @@ public class GamePlay extends Pane {
             }
         });
 
-        Text Dtime = new Text("D:");
-        Dtime.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        Text Ftime = new Text("F:");
-        Ftime.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        Text Jtime = new Text("J:");
-        Jtime.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        Text Ktime = new Text("K:");
-        Ktime.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-        HBox timeBox = new HBox();
+        VBox timeBox = new VBox();
         getChildren().add(timeBox);
         timeBox.setLayoutX(centerX - 200);
         timeBox.setLayoutY(centerY - 300);
         timeBox.setAlignment(Pos.CENTER);
-        timeBox.getChildren().addAll(Dtime, Ftime, Jtime, Ktime);
+
+        HBox PressTimeBox = new HBox();
+        PressTimeBox.setAlignment(Pos.CENTER);
+        String[] key = {"D: ", "F: ", "J: ", "K: "};
+        Text[] keyPressTimeTexts = new Text[4];
+        for(int i = 0; i < 4; i++){
+            keyPressTimeTexts[i] = new Text(key[0] + 0);
+            keyPressTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+            keyPressTimeTexts[i].setFill(Color.WHITE);
+            PressTimeBox.getChildren().add(keyPressTimeTexts[i]);
+        }
+
+        HBox deltaTimeBox = new HBox();
+        deltaTimeBox.setAlignment(Pos.CENTER);
+        Text[] keyDeltaTimeTexts = new Text[4];
+        for(int i = 0; i < 4; i++){
+            keyDeltaTimeTexts[i] = new Text(key[0] + "delta: " + 0);
+            keyDeltaTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+            keyDeltaTimeTexts[i].setFill(Color.WHITE);
+            deltaTimeBox.getChildren().add(keyDeltaTimeTexts[i]);
+        }
+
+        timeBox.getChildren().addAll(PressTimeBox, deltaTimeBox);
 
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.D){
-                Dtime.setText("D: " + timer.getCurrentTime());
+                inputManager.handleKeyPress(KeyCode.D);
+                keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
+                keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
             }
             if(e.getCode() == KeyCode.F){
-                Ftime.setText("F: " + timer.getCurrentTime());
+                inputManager.handleKeyPress(KeyCode.F);
+                keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
+                keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
             }
             if(e.getCode() == KeyCode.J){
-                Jtime.setText("J: " + timer.getCurrentTime());
+                inputManager.handleKeyPress(KeyCode.J);
+                keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
+                keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
             }
             if(e.getCode() == KeyCode.K){
-                Ktime.setText("K: " + timer.getCurrentTime());
+                inputManager.handleKeyPress(KeyCode.K);
+                keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
+                keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
             }
             if(e.getCode() == KeyCode.ESCAPE){
                 if(!getChildren().contains(leaveWindow)) {
@@ -190,31 +220,55 @@ public class GamePlay extends Pane {
     }
 
     private void update(int gameTime){
-        Note trackDNote = beatMap.getTrack(0).getNotes().get(0);
-        Note trackFNote = beatMap.getTrack(1).getNotes().get(0);
-        Note trackJNote = beatMap.getTrack(2).getNotes().get(0);
-        Note trackKNote = beatMap.getTrack(3).getNotes().get(0);
-        if(gameTime > trackDNote.getBornTime()){
-            notefall(trackDNote, tracks[0]);
-            getChildren().add(trackDNote);
-            beatMap.getTrack(0).getNotes().remove(0);
-        }
-        if(gameTime > trackFNote.getBornTime()){
-            notefall(trackFNote, tracks[1]);
-            getChildren().add(trackFNote);
-            beatMap.getTrack(1).getNotes().remove(0);
-        }
-        if(gameTime > trackJNote.getBornTime()){
-            notefall(trackJNote, tracks[2]);
-            getChildren().add(trackJNote);
-            beatMap.getTrack(2).getNotes().remove(0);
-        }
-        if(gameTime > trackKNote.getBornTime()){
-            notefall(trackKNote, tracks[3]);
-            getChildren().add(trackKNote);
-            beatMap.getTrack(3).getNotes().remove(0);
-        }
+        spawnNote(0, gameTime);
+        spawnNote(1, gameTime);
+        spawnNote(2, gameTime);
+        spawnNote(3, gameTime);
         gameTimer.setText("Time: " + gameTime);
+
+        if(!bornedNotes.isEmpty()){
+            if(!bornedNotes.get(0).getNotes().isEmpty()){
+                if(bornedNotes.get(0).getNotes().get(0).getHitTime() - gameTime < -RhythmGame.acceptableRange) {
+                    getChildren().remove(bornedNotes.get(0).getNotes().get(0));
+                    bornedNotes.get(0).getNotes().get(0).miss();
+                    bornedNotes.get(0).removeNote();
+                }
+            }
+            if(!bornedNotes.get(1).getNotes().isEmpty()){
+                if(bornedNotes.get(1).getNotes().get(0).getHitTime() - gameTime < -RhythmGame.acceptableRange) {
+                    getChildren().remove(bornedNotes.get(1).getNotes().get(0));
+                    bornedNotes.get(1).getNotes().get(0).miss();
+                    bornedNotes.get(1).removeNote();
+                }
+            }
+            if(!bornedNotes.get(2).getNotes().isEmpty()){
+                if(bornedNotes.get(2).getNotes().get(0).getHitTime() - gameTime < -RhythmGame.acceptableRange) {
+                    getChildren().remove(bornedNotes.get(2).getNotes().get(0));
+                    bornedNotes.get(2).getNotes().get(0).miss();
+                    bornedNotes.get(2).removeNote();
+                }
+            }
+            if(!bornedNotes.get(3).getNotes().isEmpty()){
+                if(bornedNotes.get(3).getNotes().get(0).getHitTime() - gameTime < -RhythmGame.acceptableRange) {
+                    getChildren().remove(bornedNotes.get(3).getNotes().get(0));
+                    bornedNotes.get(3).getNotes().get(0).miss();
+                    bornedNotes.get(3).removeNote();
+                }
+            }
+        }
+    }
+
+    private void spawnNote(int trackIndex, int gameTime){
+        List<Note> notes = beatMap.getTrack(trackIndex).getNotes();
+        if(!notes.isEmpty()){
+            Note trackNote = beatMap.getTrack(trackIndex).getNotes().get(0);
+            if(gameTime > trackNote.getBornTime()){
+                notefall(trackNote, tracks[trackIndex]);
+                getChildren().add(trackNote);
+                notes.remove(0);
+                bornedNotes.get(0).addNote(trackNote);
+            }
+        }
     }
 
     private void notefall(Note note, Line track){
@@ -267,6 +321,22 @@ public class GamePlay extends Pane {
         }else {
             background.setImage(new Image("file:" + selectedSong.getPath() + "/cover.jpg"));
         }
+    }
+
+    public ArrayList<Track> getBornedNotes(){
+        return bornedNotes;
+    }
+
+    public long getStartTime(){
+        return startTime;
+    }
+
+    public List<PathTransition> getPathTransitions(){
+        return pathTransitions;
+    }
+
+    public List<ScaleTransition> getScaleTransitions(){
+        return scaleTransitions;
     }
 
     private static class LeaveWindow extends HBox {

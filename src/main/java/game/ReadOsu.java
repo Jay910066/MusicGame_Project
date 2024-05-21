@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * 讀取.osu檔案
@@ -69,7 +66,7 @@ public class ReadOsu {
                         beatMap.getTrack(track).addNote(new Single(track, hitTime));
                     } else if(type.equals("128")) {
                         int endTime = Integer.parseInt(data[5].split(":")[0]);
-                        beatMap.getTrack(track).addNote(new Slider(track, hitTime, endTime));
+                        beatMap.getTrack(track).addNote(new Hold(track, hitTime, endTime));
                     }
                 }
             }

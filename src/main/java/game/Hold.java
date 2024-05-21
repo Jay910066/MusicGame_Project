@@ -1,17 +1,16 @@
 package game;
 
-import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
 
-public class Slider extends Note{
+public class Hold extends Note{
     private int endTime;
     private int track;
     private int hitTime;
     private boolean hit = false;
     private boolean kill = false;
 
-    Slider(int track, int hitTime, int endTime) {
+    Hold(int track, int hitTime, int endTime) {
         super(track, hitTime);
         this.endTime = endTime;
         if (track == 0) {
