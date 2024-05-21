@@ -4,10 +4,13 @@ import com.almasb.fxgl.core.collection.grid.Grid;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * 設定畫面
@@ -15,9 +18,11 @@ import javafx.scene.text.Text;
 public class Settings extends VBox {
     private ScreenManager screenManager;
     public static double flowSpeed = 1.0;
+    public static double volume = 50.0;
     public static int offset = 0;
     private String previousScreen;
     private int previousIndex;
+    private File[] songList;
     /**
      * 設定畫面
      * @param screenManager 畫面管理器
@@ -49,12 +54,14 @@ public class Settings extends VBox {
             }
         });
 
+        
         Label offsetLabel = new Label("Offset:");
         TextField offsetField = new TextField();
         Text offsetText = new Text("0");
         settings.add(offsetLabel, 0, 1);
         settings.add(offsetField, 1, 1);
         settings.add(offsetText, 2, 1);
+        
 
         offsetField.setOnAction(e -> {
             try {
@@ -64,7 +71,21 @@ public class Settings extends VBox {
                 offsetField.setText(offsetText.getText());
             }
         });
-
+        
+        File songFolder = new File("Resources/Songs");
+        songList = songFolder.listFiles();
+        Media backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
+        MediaPlayer backgroundSongPlayer = new MediaPlayer(backgroundSong);
+        Label volumeLabel = new Label("Volume:");
+        Slider volumeSlider = new Slider();
+        volumeSlider.setPrefWidth(200);
+        volumeSlider.setValue(50);
+        backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().devide(100));
+        Text volumeText = new Text(volumeSlider.valueProperty().toString());
+        settings.add(volumeLabel, 0, 2);
+        settings.add(volumeSlider, 1, 2);
+        settings.add(volumeText, 2, 2);
+        
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> {
             goBack();
