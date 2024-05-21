@@ -85,6 +85,10 @@ public class Settings extends VBox {
         volumeSlider.setPrefWidth(200);
         volumeSlider.setValue(50);
         backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().devide(100));
+        volumeSlider.valueProperty().addListener(ov -> {
+            volume = volumeSlider.getvalue();
+        })
+        
         Text volumeText = new Text(volumeSlider.valueProperty().toString());
         settings.add(volumeLabel, 0, 2);
         settings.add(volumeSlider, 1, 2);
