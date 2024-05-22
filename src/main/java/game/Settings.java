@@ -23,7 +23,6 @@ public class Settings extends VBox {
     public static double volume = 50.0;
     public static int offset = 0;
     private String previousScreen;
-    private int previousIndex;
     private File[] songList;
     private Media backgroundSong;
     private MediaPlayer backgroundSongPlayer;
@@ -31,12 +30,10 @@ public class Settings extends VBox {
      * 設定畫面
      * @param screenManager 畫面管理器
      * @param previousScreen 前一畫面的名稱，確認要回到哪個畫面
-     * @param previousIndex 歌曲索引，紀錄之前停留在哪首歌曲
      */
-    public Settings(ScreenManager screenManager, String previousScreen, int previousIndex) {
+    public Settings(ScreenManager screenManager, String previousScreen) {
         this.screenManager = screenManager;
         this.previousScreen = previousScreen;
-        this.previousIndex = previousIndex;
 
         GridPane settings = new GridPane();
         getChildren().add(settings);
@@ -121,9 +118,5 @@ public class Settings extends VBox {
 
     public void setPreviousScreen(String previousScreen) {
         this.previousScreen = previousScreen;
-    }
-
-    public void setPreviousIndex(int previousIndex) {
-        this.previousIndex = previousIndex;
     }
 }

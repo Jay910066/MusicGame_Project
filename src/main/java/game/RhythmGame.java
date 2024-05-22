@@ -13,7 +13,7 @@ public class RhythmGame extends Application {
     ScreenManager screenManager;
     public void start(Stage primaryStage) {
         screenManager = new ScreenManager(primaryStage, settings); // 建立畫面管理器
-        settings = new Settings(screenManager, "MainMenu", 0); // 建立設定畫面
+        settings = new Settings(screenManager, "MainMenu"); // 建立設定畫面
         screenManager.setSettings(settings);
         screenManager.switchToMainMenu(); // 進入主畫面
         primaryStage.setTitle("Rhythm Game");

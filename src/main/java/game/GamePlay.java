@@ -263,15 +263,15 @@ public class GamePlay extends Pane {
         if(!notes.isEmpty()){
             Note trackNote = beatMap.getTrack(trackIndex).getNotes().get(0);
             if(gameTime > trackNote.getBornTime()){
-                notefall(trackNote, tracks[trackIndex]);
+                noteFall(trackNote, tracks[trackIndex]);
                 getChildren().add(trackNote);
                 notes.remove(0);
-                bornedNotes.get(0).addNote(trackNote);
+                bornedNotes.get(trackIndex).addNote(trackNote);
             }
         }
     }
 
-    private void notefall(Note note, Line track){
+    private void noteFall(Note note, Line track){
         PathTransition pathTransition = new PathTransition();
         pathTransition.setNode(note);
         pathTransition.setPath(track);

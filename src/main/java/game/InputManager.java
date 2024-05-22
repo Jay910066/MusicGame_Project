@@ -61,6 +61,6 @@ public class InputManager {
     }
 
     public int getDeltaTime(KeyCode keyCode) {
-        return deltaTime.get(keyCode);
+        return deltaTime.getOrDefault(keyCode, 0);
     }
 }

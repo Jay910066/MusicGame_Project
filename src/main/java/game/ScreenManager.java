@@ -40,7 +40,6 @@ public class ScreenManager {
      */
     public void switchToSettings(String previousScreen) {
         settings.setPreviousScreen(previousScreen);
-        settings.setPreviousIndex(SongListMenu.selectedIndex);
         root.getChildren().clear();
         root.getChildren().add(settings);
     }
