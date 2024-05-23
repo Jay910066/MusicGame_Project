@@ -213,6 +213,7 @@ public class SongListMenu extends StackPane {
         previewSongPlayer.stop();
         selectedSong = new Media(new File(songList[index], "song.mp3").toURI().toString());
         previewSongPlayer = new MediaPlayer(selectedSong);
+        previewSongPlayer.setVolume(Settings.volume/100.0);
         previewSongPlayer.setStartTime(Duration.millis(readOsu.getPreviewTime()));
         previewSongPlayer.play();
 
