@@ -26,8 +26,10 @@ public class Settings extends VBox {
     private File[] songList;
     private Media backgroundSong;
     private MediaPlayer backgroundSongPlayer;
+
     /**
      * 設定畫面
+     *
      * @param screenManager 畫面管理器
      * @param previousScreen 前一畫面的名稱，確認要回到哪個畫面
      */
@@ -50,29 +52,29 @@ public class Settings extends VBox {
             try {
                 flowSpeed = Double.parseDouble(flowSpeedField.getText());
                 flowSpeedText.setText(flowSpeedField.getText());
-            } catch (NumberFormatException ex) {
+            }catch(NumberFormatException ex) {
                 flowSpeedField.setText(flowSpeedText.getText());
             }
         });
 
-        
+
         Label offsetLabel = new Label("Offset:");
         TextField offsetField = new TextField();
         Text offsetText = new Text("0");
         settings.add(offsetLabel, 0, 1);
         settings.add(offsetField, 1, 1);
         settings.add(offsetText, 2, 1);
-        
+
 
         offsetField.setOnAction(e -> {
             try {
                 offset = Integer.parseInt(offsetField.getText());
                 offsetText.setText(offsetField.getText());
-            } catch (NumberFormatException ex) {
+            }catch(NumberFormatException ex) {
                 offsetField.setText(offsetText.getText());
             }
         });
-        
+
         File songFolder = new File("Resources/Songs");
         songList = songFolder.listFiles();
         backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
@@ -85,24 +87,25 @@ public class Settings extends VBox {
         volumeSlider.valueProperty().addListener(ov -> {
             volume = volumeSlider.getValue();
         });
-        
+
         Text volumeText = new Text(volumeSlider.valueProperty().toString());
         settings.add(volumeLabel, 0, 2);
         settings.add(volumeSlider, 1, 2);
         settings.add(volumeText, 2, 2);
-        
+
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> {
             goBack();
         });
 
-        this.setOnKeyPressed(e ->{
+        this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ESCAPE)
                 goBack();
         });
 
         getChildren().add(backButton);
     }
+
     /**
      * 回到前一畫面
      */
@@ -110,7 +113,7 @@ public class Settings extends VBox {
         if(previousScreen.equals("MainMenu")) {
             screenManager.switchToMainMenu();
             backgroundSongPlayer.stop();
-        } else if(previousScreen.equals("SongListMenu")) {
+        }else if(previousScreen.equals("SongListMenu")) {
             screenManager.switchToSongListMenu();
             backgroundSongPlayer.stop();
         }

@@ -12,11 +12,11 @@ public class BeatMap {
         }
     }
 
-    public void pause(){
+    public void pause() {
 
     }
 
-    public void resume(){
+    public void resume() {
 
     }
 

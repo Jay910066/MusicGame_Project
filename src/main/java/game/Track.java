@@ -17,7 +17,7 @@ public class Track {
         notes.add(note);
     }
 
-    public void removeNote() {
+    public void removeFrontNote() {
         notes.remove(0);
     }
 }

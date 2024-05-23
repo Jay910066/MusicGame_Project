@@ -36,6 +36,7 @@ public class ScreenManager {
 
     /**
      * 切換到設定畫面
+     *
      * @param previousScreen 前一畫面的名稱，確認要回到哪個畫面
      */
     public void switchToSettings(String previousScreen) {
@@ -59,6 +60,7 @@ public class ScreenManager {
 
     /**
      * 切換到遊戲畫面
+     *
      * @param selectedSong 選擇的歌曲
      */
     public void switchToGamePlay(File selectedSong) {
