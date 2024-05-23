@@ -98,6 +98,7 @@ public class GamePlay extends Pane {
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
         MediaPlayer songPlayer = new MediaPlayer(playSong);
         songPlayer.setOnReady(() -> {
+            songPlayer.setVolume(Settings.volume/100.0);
             songPlayer.play();
             timer = new Timer();
             startTime = System.nanoTime();
