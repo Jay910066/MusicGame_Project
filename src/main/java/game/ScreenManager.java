@@ -43,6 +43,7 @@ public class ScreenManager {
         settings.setPreviousScreen(previousScreen);
         root.getChildren().clear();
         root.getChildren().add(settings);
+        settings.backgroundSongPlayer.play();
     }
 
     public void setSettings(Settings settings) {
