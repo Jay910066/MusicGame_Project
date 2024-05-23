@@ -82,8 +82,8 @@ public class GamePlay extends Pane {
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
         tracks[0] = new Line(620, 115, -180, 885);
-        tracks[1] = new Line(640, 135, 290, 1615);
-        tracks[2] = new Line(680, 135, 1030, 1615);
+        tracks[1] = new Line(640, 120, 290, 1600);//v1,v3:-15
+        tracks[2] = new Line(680, 120, 1030, 1600);//v1,v3:-15
         tracks[3] = new Line(700, 115, 1500, 885);
 
         getChildren().addAll(tracks);
@@ -402,8 +402,6 @@ public class GamePlay extends Pane {
 
     public static class NoteFallInterpolation extends Interpolator {
         @Override
-        protected double curve(double t) {
-            return 2 * t * t;
-        }
+        protected double curve(double t) {return (-t)/(2*t-2);}//former:2*t*t
     }
 }
