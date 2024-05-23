@@ -25,7 +25,7 @@ public class Settings extends VBox {
     private String previousScreen;
     private File[] songList;
     private Media backgroundSong;
-    private MediaPlayer backgroundSongPlayer;
+    public MediaPlayer backgroundSongPlayer;
 
     /**
      * 設定畫面
@@ -83,12 +83,14 @@ public class Settings extends VBox {
         Slider volumeSlider = new Slider();
         volumeSlider.setPrefWidth(200);
         volumeSlider.setValue(50);
+        Text volumeText = new Text(String.valueOf(volume));
         backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().divide(100));
         volumeSlider.valueProperty().addListener(ov -> {
             volume = volumeSlider.getValue();
+            volumeText.setText(String.valueOf(Math.round(volume)));
         });
 
-        Text volumeText = new Text(volumeSlider.valueProperty().toString());
+        
         settings.add(volumeLabel, 0, 2);
         settings.add(volumeSlider, 1, 2);
         settings.add(volumeText, 2, 2);
