@@ -12,11 +12,11 @@
             <Image url="@../Images/PlayField.png" />
          </image>
       </ImageView>
-      <Line endX="620.0" endY="115.0" startX="220.0" startY="500.0" />
+      <Line endX="620.0" endY="110.0" startX="220.0" startY="525.0" />
       <Line endX="700.0" endY="115.0" startX="1100.0" startY="500.0" />
       <Line endX="640.0" endY="135.0" startX="450.0" startY="875.0" />
       <Line endX="680.0" endY="135.0" startX="875.0" startY="875.0" />
-      <ImageView fitHeight="88.0" fitWidth="406.0" layoutX="245.0" layoutY="832.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView id="track2" fitHeight="88.0" fitWidth="406.0" layoutX="245.0" layoutY="832.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Images/Left_middle.png" />
          </image>
@@ -29,6 +29,11 @@
       <ImageView fitHeight="88.0" fitWidth="406.0" layoutX="670.0" layoutY="832.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Images/Right_middle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="451.0" fitWidth="144.0" layoutX="186.0" layoutY="296.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/Left_side.png" />
          </image>
       </ImageView>
    </children>

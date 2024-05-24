@@ -93,10 +93,10 @@ public class GamePlay extends Pane {
 
 
 
-        tracks[0] = new Line(620, 115, -180, 885);
+        tracks[0] = new Line(620, 110, -180, 940);
         tracks[1] = new Line(640, 135, 260, 1615);//v1,v3:-15
         tracks[2] = new Line(680, 135, 1070, 1615);//v1,v3:-15
-        tracks[3] = new Line(700, 115, 1500, 885);
+        tracks[3] = new Line(700, 110, 1500, 940);
 
         getChildren().addAll(tracks);
 
