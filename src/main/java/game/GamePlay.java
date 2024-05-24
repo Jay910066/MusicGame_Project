@@ -81,9 +81,21 @@ public class GamePlay extends Pane {
         PlayField.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
+        ImageView[] trackPressedEffect = new ImageView[4];
+        for(int i = 0; i < 4; i++) {
+            trackPressedEffect[i] = new ImageView(new Image("file:Resources/Images/Track" + (i + 1) + "_Pressed.png"));
+            trackPressedEffect[i].setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
+            trackPressedEffect[i].setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
+            trackPressedEffect[i].setOpacity(0.5);
+            trackPressedEffect[i].setVisible(false);
+            getChildren().add(trackPressedEffect[i]);
+        }
+
+
+
         tracks[0] = new Line(620, 115, -180, 885);
-        tracks[1] = new Line(640, 120, 290, 1600);//v1,v3:-15
-        tracks[2] = new Line(680, 120, 1030, 1600);//v1,v3:-15
+        tracks[1] = new Line(640, 135, 260, 1615);//v1,v3:-15
+        tracks[2] = new Line(680, 135, 1070, 1615);//v1,v3:-15
         tracks[3] = new Line(700, 115, 1500, 885);
 
         getChildren().addAll(tracks);
@@ -98,7 +110,7 @@ public class GamePlay extends Pane {
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
         MediaPlayer songPlayer = new MediaPlayer(playSong);
         songPlayer.setOnReady(() -> {
-            songPlayer.setVolume(Settings.volume/100.0);
+            songPlayer.setVolume(Settings.volume / 100.0);
             songPlayer.play();
             timer = new Timer();
             startTime = System.nanoTime();
@@ -194,21 +206,25 @@ public class GamePlay extends Pane {
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.D) {
                 inputManager.handleKeyPress(KeyCode.D);
+                trackPressedEffect[0].setVisible(true);
                 keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
                 keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
             }
             if(e.getCode() == KeyCode.F) {
                 inputManager.handleKeyPress(KeyCode.F);
+                trackPressedEffect[1].setVisible(true);
                 keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
                 keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
             }
             if(e.getCode() == KeyCode.J) {
                 inputManager.handleKeyPress(KeyCode.J);
+                trackPressedEffect[2].setVisible(true);
                 keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
                 keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
             }
             if(e.getCode() == KeyCode.K) {
                 inputManager.handleKeyPress(KeyCode.K);
+                trackPressedEffect[3].setVisible(true);
                 keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
                 keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
             }
@@ -234,18 +250,22 @@ public class GamePlay extends Pane {
         this.setOnKeyReleased(e -> {
             if(e.getCode() == KeyCode.D) {
                 inputManager.handleKeyRelease(KeyCode.D);
+                trackPressedEffect[0].setVisible(false);
                 keyReleaseTimeTexts[0].setText("D: " + inputManager.getKeyReleaseTime(KeyCode.D));
             }
             if(e.getCode() == KeyCode.F) {
                 inputManager.handleKeyRelease(KeyCode.F);
+                trackPressedEffect[1].setVisible(false);
                 keyReleaseTimeTexts[1].setText("F: " + inputManager.getKeyReleaseTime(KeyCode.F));
             }
             if(e.getCode() == KeyCode.J) {
                 inputManager.handleKeyRelease(KeyCode.J);
+                trackPressedEffect[2].setVisible(false);
                 keyReleaseTimeTexts[2].setText("J: " + inputManager.getKeyReleaseTime(KeyCode.J));
             }
             if(e.getCode() == KeyCode.K) {
                 inputManager.handleKeyRelease(KeyCode.K);
+                trackPressedEffect[3].setVisible(false);
                 keyReleaseTimeTexts[3].setText("K: " + inputManager.getKeyReleaseTime(KeyCode.K));
             }
         });
@@ -282,7 +302,7 @@ public class GamePlay extends Pane {
             List<Note> notes = bornedNotes.get(trackIndex).getNotes();
             if(!notes.isEmpty()) {
                 Note frontNote = notes.get(0);
-                if(gameTime > frontNote.getHitTime()) {
+                if(gameTime > frontNote.getHitTime() + RhythmGame.acceptableRange) {
                     if(frontNote instanceof Single singleNote) {
                         getChildren().remove(singleNote);
                         singleNote.miss();
@@ -296,7 +316,7 @@ public class GamePlay extends Pane {
                             getChildren().remove(holdNote);
                             holdNote.miss();
                             bornedNotes.get(trackIndex).removeFrontNote();
-                            if(!notes.isEmpty()){
+                            if(!notes.isEmpty()) {
                                 getChildren().remove(notes.get(0));
                                 bornedNotes.get(trackIndex).removeFrontNote();
                             }else {
@@ -325,8 +345,8 @@ public class GamePlay extends Pane {
         scaleTransition.setInterpolator(new NoteFallInterpolation());
         scaleTransition.setFromX(0.12);
         scaleTransition.setFromY(0.12);
-        scaleTransition.setToX(2);
-        scaleTransition.setToY(2);
+        scaleTransition.setToX(1.88);
+        scaleTransition.setToY(1.88);
         scaleTransition.play();
 
         scaleTransitions.add(scaleTransition);
@@ -402,6 +422,8 @@ public class GamePlay extends Pane {
 
     public static class NoteFallInterpolation extends Interpolator {
         @Override
-        protected double curve(double t) {return (-t)/(2*t-2);}//former:2*t*t
+        protected double curve(double t) {
+            return (-t) / (2 * t - 2);
+        }//former:2*t*t
     }
 }

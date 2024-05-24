@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Slider;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -95,17 +96,17 @@ public class Settings extends VBox {
         settings.add(volumeSlider, 1, 2);
         settings.add(volumeText, 2, 2);
 
-        Button backButton = new Button("Back");
-        backButton.setOnAction(e -> {
-            goBack();
-        });
+        ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
+        quitButton.setOnMouseEntered(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage()));
+        quitButton.setOnMouseExited(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton.png").getImage()));
+        quitButton.setOnMouseClicked(e -> goBack());
 
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ESCAPE)
                 goBack();
         });
 
-        getChildren().add(backButton);
+        getChildren().add(quitButton);
     }
 
     /**

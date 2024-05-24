@@ -14,7 +14,22 @@
       </ImageView>
       <Line endX="620.0" endY="115.0" startX="220.0" startY="500.0" />
       <Line endX="700.0" endY="115.0" startX="1100.0" startY="500.0" />
-      <Line endX="640.0" endY="135.0" startX="465.0" startY="875.0" />
-      <Line endX="680.0" endY="135.0" startX="855.0" startY="875.0" />
+      <Line endX="640.0" endY="135.0" startX="450.0" startY="875.0" />
+      <Line endX="680.0" endY="135.0" startX="875.0" startY="875.0" />
+      <ImageView fitHeight="88.0" fitWidth="406.0" layoutX="245.0" layoutY="832.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/Left_middle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="1000.0" fitWidth="1000.0" layoutX="160.0" layoutY="25.0" opacity="0.52" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/Track1_Pressed.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="88.0" fitWidth="406.0" layoutX="670.0" layoutY="832.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/Right_middle.png" />
+         </image>
+      </ImageView>
    </children>
 </Pane>

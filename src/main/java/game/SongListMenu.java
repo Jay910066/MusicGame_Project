@@ -150,15 +150,21 @@ public class SongListMenu extends StackPane {
         buttonBox.setPadding(new Insets(10));
         buttonBox.setSpacing(10);
 
-        ImageView backButton = new ImageView("file:Resources/Images/BackButton.png");
-        buttonBox.getChildren().add(backButton);
-        backButton.setOnMouseClicked(e -> {
+        ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
+        buttonBox.getChildren().add(quitButton);
+
+        quitButton.setOnMouseEntered(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png")));
+        quitButton.setOnMouseExited(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton.png")));
+        quitButton.setOnMouseClicked(e -> {
             screenManager.switchToMainMenu();
             previewSongPlayer.stop();
         });
 
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         buttonBox.getChildren().add(settingsButton);
+
+        settingsButton.setOnMouseEntered(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton_Selected.png")));
+        settingsButton.setOnMouseExited(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton.png")));
         settingsButton.setOnMouseClicked(e -> {
             screenManager.switchToSettings("SongListMenu");
             previewSongPlayer.stop();
