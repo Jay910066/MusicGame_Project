@@ -1,5 +1,6 @@
 package game;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import javafx.scene.control.Button;
@@ -23,9 +24,9 @@ import java.io.IOException;
  */
 public class Settings extends VBox {
     private ScreenManager screenManager;
-    public static double flowSpeed = 1.0;
-    public static double volume = 50.0;
-    public static int offset = 0;
+    public static double flowSpeed;
+    public static double volume;
+    public static int offset;
     private String previousScreen;
     private File[] songList;
     private Media backgroundSong;
@@ -41,13 +42,21 @@ public class Settings extends VBox {
         this.screenManager = screenManager;
         this.previousScreen = previousScreen;
 
+        try {
+            flowSpeed = getConfig("FlowSpeed", Double.class);
+            volume = getConfig("Volume", Double.class);
+            offset = getConfig("Offset", Integer.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         GridPane settings = new GridPane();
         getChildren().add(settings);
         settings.setHgap(10);
         settings.setVgap(10);
         Label flowSpeedLabel = new Label("Flow Speed:");
         TextField flowSpeedField = new TextField();
-        Text flowSpeedText = new Text("1.0");
+        Text flowSpeedText = new Text(String.valueOf(flowSpeed));
         settings.add(flowSpeedLabel, 0, 0);
         settings.add(flowSpeedField, 1, 0);
         settings.add(flowSpeedText, 2, 0);
@@ -67,7 +76,7 @@ public class Settings extends VBox {
 
         Label offsetLabel = new Label("Offset:");
         TextField offsetField = new TextField();
-        Text offsetText = new Text("0");
+        Text offsetText = new Text(String.valueOf(offset));
         settings.add(offsetLabel, 0, 1);
         settings.add(offsetField, 1, 1);
         settings.add(offsetText, 2, 1);
@@ -152,5 +161,11 @@ public class Settings extends VBox {
         try (FileWriter file = new FileWriter("./Resources/config.json")) {
             file.write(jsonNode.toString());
         }
+    }
+
+    private <T> T getConfig(String Function, Class<T> valueType) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(new File("./Resources/config.json"));
+        return objectMapper.convertValue(jsonNode.get(Function), valueType);
     }
 }
