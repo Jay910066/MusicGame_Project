@@ -29,7 +29,7 @@ public class MainMenu extends VBox {
         this.setFocusTraversable(true);
         this.requestFocus();
 
-        ImageView background = new ImageView("file:Resources/Images/可能是menu的圖.jpg");
+        ImageView background = new ImageView("file:Resources/Images/menu_background.jpg");
         ImageView playButton = new ImageView("file:Resources/Images/PlayButton.png");
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
