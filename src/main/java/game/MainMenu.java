@@ -26,6 +26,8 @@ public class MainMenu extends VBox {
      */
     public MainMenu(ScreenManager screenManager) {
         this.setAlignment(Pos.CENTER);
+        this.setFocusTraversable(true);
+        this.requestFocus();
 
         ImageView background = new ImageView("file:Resources/Images/可能是menu的圖.jpg");
         ImageView playButton = new ImageView("file:Resources/Images/PlayButton.png");
