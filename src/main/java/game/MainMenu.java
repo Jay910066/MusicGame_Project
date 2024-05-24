@@ -1,6 +1,7 @@
 package game;
 
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -9,12 +10,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 /**
@@ -28,10 +27,18 @@ public class MainMenu extends VBox {
     public MainMenu(ScreenManager screenManager) {
         this.setAlignment(Pos.CENTER);
 
-        ImageView mainTitle = new ImageView("file:Resources/Images/MainTitle.png");
+        ImageView background = new ImageView("file:Resources/Images/可能是menu的圖.jpg");
         ImageView playButton = new ImageView("file:Resources/Images/PlayButton.png");
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double maxDimension = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+        background.setPreserveRatio(true);
+        if(background.getFitHeight() < background.getFitWidth())
+            background.setFitHeight(maxDimension * 1);
+        else
+            background.setFitWidth(maxDimension * 1);
 
         playButton.setOnMouseEntered(e -> playButton.setImage(new Image("file:Resources/Images/PlayButton_Selected.png")));
         playButton.setOnMouseExited(e -> playButton.setImage(new Image("file:Resources/Images/PlayButton.png")));
@@ -50,12 +57,12 @@ public class MainMenu extends VBox {
 
         mainMenu.setAlignment(Pos.CENTER);
         mainMenu.setSpacing(20);
-        mainMenu.getChildren().addAll(mainTitle, playButton, settingsButton, quitButton);
+        mainMenu.getChildren().addAll( playButton, settingsButton, quitButton);
 
         StackPane root = new StackPane();
         this.getChildren().add(root);
 
-        root.getChildren().add(mainMenu);
+        root.getChildren().addAll(background,mainMenu);
 
         HBox leaveWindow = new HBox(20);
         leaveWindow.setAlignment(Pos.CENTER);
