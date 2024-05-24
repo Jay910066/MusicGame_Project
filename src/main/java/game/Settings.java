@@ -1,6 +1,7 @@
 package game;
 
-import com.almasb.fxgl.core.collection.grid.Grid;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -14,6 +15,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * 設定畫面
@@ -53,8 +56,11 @@ public class Settings extends VBox {
             try {
                 flowSpeed = Double.parseDouble(flowSpeedField.getText());
                 flowSpeedText.setText(flowSpeedField.getText());
+                setConfig("FlowSpeed",flowSpeed);
             }catch(NumberFormatException ex) {
                 flowSpeedField.setText(flowSpeedText.getText());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -71,8 +77,11 @@ public class Settings extends VBox {
             try {
                 offset = Integer.parseInt(offsetField.getText());
                 offsetText.setText(offsetField.getText());
+                setConfig("Offset", offset);
             }catch(NumberFormatException ex) {
                 offsetField.setText(offsetText.getText());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
@@ -89,6 +98,11 @@ public class Settings extends VBox {
         volumeSlider.valueProperty().addListener(ov -> {
             volume = volumeSlider.getValue();
             volumeText.setText(String.valueOf(Math.round(volume)));
+            try {
+                setConfig("Volume",volume);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         
@@ -124,5 +138,19 @@ public class Settings extends VBox {
 
     public void setPreviousScreen(String previousScreen) {
         this.previousScreen = previousScreen;
+    }
+
+    private void setConfig(String Function, double value) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonNode = objectMapper.readValue(new File("./Resources/config.json"), ObjectNode.class);
+        if(Function.equals("Offset")) {
+            jsonNode.put("Offset", (int)value);
+        }
+        else {
+            jsonNode.put(Function, value);
+        }
+        try (FileWriter file = new FileWriter("./Resources/config.json")) {
+            file.write(jsonNode.toString());
+        }
     }
 }
