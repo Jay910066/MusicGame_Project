@@ -385,6 +385,10 @@ public class GamePlay extends Pane {
         return bornedNotes;
     }
 
+    public BeatMap getBeatMap() {
+        return beatMap;
+    }
+
     public long getStartTime() {
         return startTime;
     }

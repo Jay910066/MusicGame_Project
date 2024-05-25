@@ -58,12 +58,20 @@ public class InputManager {
             List<Note> notes = gamePlay.getBornedNotes().get(trackIndex).getNotes();
             if(!notes.isEmpty()) {
                 Note note = gamePlay.getBornedNotes().get(trackIndex).getNotes().get(0);
-                if(note instanceof Hold holdNote) {
-                    if(holdNote.OnHitCheck(keyReleaseTimes.get(keyCode)) != Judge.NONE && holdNote.isEndNote()) {
+                if(note instanceof Hold holdNote && holdNote.isEndNote()) {
+                    if(holdNote.OnHitCheck(keyReleaseTimes.get(keyCode)) != Judge.NONE) {
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyReleaseTimes.get(keyCode));
-                        gamePlay.getChildren().remove(holdNote);
-                        gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
+                    }else {
+                        holdNote.miss();
                     }
+                    gamePlay.getChildren().remove(holdNote);
+                    gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
+                }
+            }else if(!gamePlay.getBeatMap().getTrack(trackIndex).getNotes().isEmpty()) {
+                Note note = gamePlay.getBeatMap().getTrack(trackIndex).getNotes().get(0);
+                if(note instanceof Hold holdNote && holdNote.isEndNote()) {
+                    holdNote.miss();
+                    gamePlay.getBeatMap().getTrack(trackIndex).removeFrontNote();
                 }
             }
         }
