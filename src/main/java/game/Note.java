@@ -35,18 +35,22 @@ public abstract class Note extends ImageView{
         int deltaTime = pressTime - hitTime;
         if(deltaTime <= RhythmGame.acceptableRange) {
             hit();
-            if(deltaTime > 80){
+            if(deltaTime > 100){
                 return Judge.Fast_BAD;
             }
-            if(deltaTime > 50){
+            if(deltaTime > 70){
                 return Judge.Fast_GOOD;
-            }else if(deltaTime > 16){
+            }else if(deltaTime > 37){
                 return Judge.Fast_GREAT;
-            }else if(deltaTime >= -16){
+            }else if(deltaTime > 16) {
                 return Judge.PERFECT;
-            }else if(deltaTime > -50){
+            }else if(deltaTime >= -16){
+                return Judge.PERFECT_PLUS;
+            }else if(deltaTime > -37) {
+                return Judge.PERFECT;
+            }else if(deltaTime > -70){
                 return Judge.Late_GREAT;
-            }else if(deltaTime > -80){
+            }else if(deltaTime > -100){
                 return Judge.Late_GOOD;
             }else if(deltaTime > -RhythmGame.acceptableRange) {
                 return Judge.Late_BAD;

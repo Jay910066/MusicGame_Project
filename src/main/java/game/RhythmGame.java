@@ -8,7 +8,7 @@ import javafx.stage.Stage;
  */
 public class RhythmGame extends Application {
     public static final int defaultFlowTime = 3;
-    public static final int acceptableRange = 110;
+    public static final int acceptableRange = 124;
     private Settings settings;
 
     ScreenManager screenManager;
