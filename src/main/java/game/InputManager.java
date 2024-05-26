@@ -20,9 +20,9 @@ public class InputManager {
         }
     }
 
-    public void handleKeyPress(KeyCode keyCode) {
+    public Judge handleKeyPress(KeyCode keyCode) {
         if(currentlyPressedKeys.contains(keyCode)) {
-            return;
+            return Judge.NONE;
         }
         currentlyPressedKeys.add(keyCode);
 
@@ -38,16 +38,19 @@ public class InputManager {
                         deltaTime.put(keyCode, singleNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(singleNote);
                         gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
+                        return singleNote.OnHitCheck(keyPressTimes.get(keyCode));
                     }
                 }else if(note instanceof Hold holdNote) {
                     if(holdNote.OnHitCheck(keyPressTimes.get(keyCode)) != Judge.NONE && !holdNote.isEndNote()) {
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(holdNote);
                         gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
+                        return holdNote.OnHitCheck(keyPressTimes.get(keyCode));
                     }
                 }
             }
         }
+        return Judge.NONE;
     }
 
     public void handleKeyRelease(KeyCode keyCode) {

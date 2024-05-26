@@ -1,9 +1,6 @@
 package game;
 
-import javafx.animation.AnimationTimer;
-import javafx.animation.Interpolator;
-import javafx.animation.PathTransition;
-import javafx.animation.ScaleTransition;
+import javafx.animation.*;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
@@ -21,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +47,7 @@ public class GamePlay extends Pane {
     private List<PathTransition> pathTransitions = new ArrayList<>();
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
     private InputManager inputManager = new InputManager(this);
+    ImageView[] judgeEffect = new ImageView[5];
 
     /**
      * 遊戲畫面
@@ -91,6 +90,17 @@ public class GamePlay extends Pane {
             getChildren().add(trackPressedEffect[i]);
         }
 
+        judgeEffect[0] = new ImageView(new Image("file:Resources/Images/Perfect+.png"));
+        judgeEffect[1] = new ImageView(new Image("file:Resources/Images/Perfect.png"));
+        judgeEffect[2] = new ImageView(new Image("file:Resources/Images/Great.png"));
+        judgeEffect[3] = new ImageView(new Image("file:Resources/Images/Good.png"));
+        judgeEffect[4] = new ImageView(new Image("file:Resources/Images/Bad.png"));
+        for(int i = 0; i < 5; i++) {
+            judgeEffect[i].setX(centerX);
+            judgeEffect[i].setY(centerY);
+            judgeEffect[i].setVisible(false);
+            getChildren().add(judgeEffect[i]);
+        }
 
 
         tracks[0] = new Line(620, 110, -180, 940);
@@ -205,28 +215,32 @@ public class GamePlay extends Pane {
 
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.D) {
-                inputManager.handleKeyPress(KeyCode.D);
+                Judge judgement = inputManager.handleKeyPress(KeyCode.D);
                 trackPressedEffect[0].setVisible(true);
                 keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
                 keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.F) {
-                inputManager.handleKeyPress(KeyCode.F);
+                Judge judgement = inputManager.handleKeyPress(KeyCode.F);
                 trackPressedEffect[1].setVisible(true);
                 keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
                 keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.J) {
-                inputManager.handleKeyPress(KeyCode.J);
+                Judge judgement = inputManager.handleKeyPress(KeyCode.J);
                 trackPressedEffect[2].setVisible(true);
                 keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
                 keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.K) {
-                inputManager.handleKeyPress(KeyCode.K);
+                Judge judgement = inputManager.handleKeyPress(KeyCode.K);
                 trackPressedEffect[3].setVisible(true);
                 keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
                 keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.ESCAPE) {
                 if(!getChildren().contains(leaveWindow)) {
@@ -429,5 +443,40 @@ public class GamePlay extends Pane {
         protected double curve(double t) {
             return (-t) / (2 * t - 2);
         }//former:2*t*t
+    }
+
+    private void showJudgement(Judge judgement){
+        int i=0;
+        PauseTransition hideJudgement = new PauseTransition(Duration.seconds(0.1));
+        switch (judgement) {
+            case PERFECT_PLUS:
+                judgeEffect[0].setVisible(true);
+                hideJudgement.play();
+                break;
+            case PERFECT:
+                judgeEffect[1].setVisible(true);
+                i=1;
+                hideJudgement.play();
+                break;
+            case Fast_GREAT,Late_GREAT:
+                judgeEffect[2].setVisible(true);
+                i=2;
+                hideJudgement.play();
+                break;
+            case Fast_GOOD,Late_GOOD:
+                judgeEffect[3].setVisible(true);
+                i=3;
+                hideJudgement.play();
+                break;
+            case Fast_BAD,Late_BAD:
+                judgeEffect[4].setVisible(true);
+                i=4;
+                hideJudgement.play();
+                break;
+            case NONE:
+                break;
+        }
+        int finalI = i;
+        hideJudgement.setOnFinished(f-> judgeEffect[finalI].setVisible(false));
     }
 }
