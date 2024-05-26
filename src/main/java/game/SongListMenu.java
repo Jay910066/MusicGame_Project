@@ -205,6 +205,10 @@ public class SongListMenu extends StackPane {
         selectItem(selectedIndex);
     }
 
+    /**
+     * 選擇歌曲
+     * @param index 歌曲索引
+     */
     private void selectItem(int index) {
         readOsu.setSong(songList[index].getPath() + "/Info.osu");
         if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){

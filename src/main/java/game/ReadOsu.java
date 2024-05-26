@@ -28,7 +28,6 @@ public class ReadOsu {
 
     /**
      * 讀取該.osu檔案
-     *
      * @param path .osu檔案路徑
      */
     public void setSong(String path) {
@@ -45,6 +44,10 @@ public class ReadOsu {
         }
     }
 
+    /**
+     * 取得譜面
+     * @return 譜面
+     */
     public BeatMap getBeatMap() {
         BeatMap beatMap = new BeatMap();
         try {
@@ -81,7 +84,6 @@ public class ReadOsu {
 
     /**
      * 讀取歌曲資訊
-     *
      * @param line .osu檔案的每一行
      */
     private void readInfo(String line) {
@@ -101,7 +103,6 @@ public class ReadOsu {
 
     /**
      * 取得歌曲預覽時間
-     *
      * @return 歌曲預覽時間
      */
     public int getPreviewTime() {
@@ -110,7 +111,6 @@ public class ReadOsu {
 
     /**
      * 取得歌曲標題
-     *
      * @return 歌曲標題
      */
     public String getTitle() {
@@ -119,7 +119,6 @@ public class ReadOsu {
 
     /**
      * 取得歌曲演出者
-     *
      * @return 歌曲演出者
      */
     public String getArtist() {
@@ -128,7 +127,6 @@ public class ReadOsu {
 
     /**
      * 取得譜面創作者
-     *
      * @return 譜面創作者
      */
     public String getCreator() {

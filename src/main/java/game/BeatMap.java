@@ -12,19 +12,7 @@ public class BeatMap {
         }
     }
 
-    public void pause() {
-
-    }
-
-    public void resume() {
-
-    }
-
     public Track getTrack(int index) {
         return tracks.get(index);
-    }
-
-    public void addTrack(Track track) {
-        tracks.add(track);
     }
 }

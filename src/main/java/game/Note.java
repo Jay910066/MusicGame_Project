@@ -16,8 +16,10 @@ public abstract class Note extends ImageView{
         this.hitTime = hitTime;
         delayTime = RhythmGame.defaultFlowTime * 1000;
         bornTime = hitTime - (int)(delayTime / Settings.flowSpeed);
-        this.setScaleX(0.5);
-        this.setScaleY(0.5);
+        this.setScaleX(0.01);
+        this.setScaleY(0.01);
+        this.setTranslateX(-100);
+        this.setTranslateY(-100);
     }
 
     public int getTrack(){
@@ -37,8 +39,7 @@ public abstract class Note extends ImageView{
             hit();
             if(deltaTime > 100){
                 return Judge.Fast_BAD;
-            }
-            if(deltaTime > 70){
+            }else if(deltaTime > 70){
                 return Judge.Fast_GOOD;
             }else if(deltaTime > 37){
                 return Judge.Fast_GREAT;
@@ -68,6 +69,7 @@ public abstract class Note extends ImageView{
     };
 
     public void miss(){
+        Judgement.judge(Judge.MISS);
         miss = true;
     };
 

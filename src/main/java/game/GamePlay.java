@@ -35,15 +35,15 @@ public class GamePlay extends Pane {
     private double centerY;
     private ImageView background;
     private ImageView PlayField;
-    private Timer timer;
     private BeatMap beatMap;
     private Line[] tracks = new Line[4];
-    private ArrayList<Track> bornedNotes;
+    private ArrayList<Track> bornNotes;
     private long startTime;
     private long pauseTime;
     private boolean isPaused = false;
     private AnimationTimer gameLoop;
     private Text gameTimer;
+    private static Text comboText;
     private List<PathTransition> pathTransitions = new ArrayList<>();
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
     private InputManager inputManager = new InputManager(this);
@@ -51,7 +51,6 @@ public class GamePlay extends Pane {
 
     /**
      * 遊戲畫面
-     *
      * @param screenManager 畫面管理器
      * @param selectedSong 選擇的歌曲
      */
@@ -65,21 +64,19 @@ public class GamePlay extends Pane {
 
         ReadOsu readOsu = new ReadOsu(selectedSong.getPath() + "/Info.osu");
 
-        System.out.println(readOsu.getTitle());
-        System.out.println(readOsu.getArtist());
-        System.out.println(readOsu.getCreator());
-
         setBackground();
 
+        /*
+        * 遊戲畫面
+        * */
         PlayField = new ImageView(new Image("file:Resources/Images/PlayField.png"));
         getChildren().add(PlayField);
-        System.out.println(PlayField.getBoundsInParent().getWidth());
-        System.out.println(centerX);
-        System.out.println(PlayField.getBoundsInParent().getHeight());
-        System.out.println(centerY);
         PlayField.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
+        /*
+        * 音軌特效
+        * */
         ImageView[] trackPressedEffect = new ImageView[4];
         for(int i = 0; i < 4; i++) {
             trackPressedEffect[i] = new ImageView(new Image("file:Resources/Images/Track" + (i + 1) + "_Pressed.png"));
@@ -89,6 +86,13 @@ public class GamePlay extends Pane {
             trackPressedEffect[i].setVisible(false);
             getChildren().add(trackPressedEffect[i]);
         }
+
+        comboText = new Text();
+        comboText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
+        comboText.setFill(Color.WHITE);
+        comboText.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2));
+        comboText.setY(centerY - 250);
+        getChildren().add(comboText);
 
         judgeEffect[0] = new ImageView(new Image("file:Resources/Images/Perfect+.png"));
         judgeEffect[1] = new ImageView(new Image("file:Resources/Images/Perfect.png"));
@@ -102,30 +106,27 @@ public class GamePlay extends Pane {
             getChildren().add(judgeEffect[i]);
         }
 
-
         tracks[0] = new Line(620, 110, -180, 940);
-        tracks[1] = new Line(640, 135, 260, 1615);//v1,v3:-15
-        tracks[2] = new Line(680, 135, 1070, 1615);//v1,v3:-15
+        tracks[1] = new Line(640, 135, 260, 1615);
+        tracks[2] = new Line(680, 135, 1070, 1615);
         tracks[3] = new Line(700, 110, 1500, 940);
 
         getChildren().addAll(tracks);
 
         beatMap = readOsu.getBeatMap();
 
-        bornedNotes = new ArrayList<>();
+        bornNotes = new ArrayList<>();
         for(int i = 0; i < 4; i++) {
-            bornedNotes.add(new Track());
+            bornNotes.add(new Track());
         }
 
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
         MediaPlayer songPlayer = new MediaPlayer(playSong);
         songPlayer.setOnReady(() -> {
+            Judgement.reset();
             songPlayer.setVolume(Settings.volume / 100.0);
             songPlayer.play();
-            timer = new Timer();
             startTime = System.nanoTime();
-            /*-----Update Test-----*/
-
             gameLoop = new AnimationTimer() {
 
                 @Override
@@ -139,21 +140,21 @@ public class GamePlay extends Pane {
                 }
             };
             gameLoop.start();
-
-            /*-----Update Test-----*/
         });
 
-        gameTimer = new Text("Time: " + 0);
-        gameTimer.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-        gameTimer.setLayoutX(centerX - 100);
-        gameTimer.setLayoutY(centerY - 300);
-        getChildren().add(gameTimer);
+        /*遊戲時間*/
+        //gameTimer = new Text("Time: " + 0);
+        //gameTimer.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        //gameTimer.setLayoutX(centerX - 100);
+        //gameTimer.setLayoutY(centerY - 300);
+        //getChildren().add(gameTimer);
 
-        AtomicBoolean exit = new AtomicBoolean(false);
 
+        /*
+        *離開視窗
+        */
         LeaveWindow leaveWindow = new LeaveWindow();
         leaveWindow.confirmButton.setOnAction(event -> {
-            exit.set(true);
             screenManager.switchToSongListMenu();
         });
         leaveWindow.retryButton.setOnAction(event -> {
@@ -165,7 +166,6 @@ public class GamePlay extends Pane {
             songPlayer.play();
             isPaused = false;
             startTime += System.nanoTime() - pauseTime;
-            timer.resume();
             for(PathTransition pathTransition : pathTransitions) {
                 pathTransition.play();
             }
@@ -174,6 +174,7 @@ public class GamePlay extends Pane {
             }
         });
 
+        /*------按下按鍵後的時間資訊------*/
         VBox timeBox = new VBox();
         getChildren().add(timeBox);
         timeBox.setLayoutX(centerX - 200);
@@ -212,7 +213,11 @@ public class GamePlay extends Pane {
         }
 
         timeBox.getChildren().addAll(PressTimeBox, deltaTimeBox, ReleaseTimeBox);
+        /*------按下按鍵後的時間資訊------*/
 
+        /*
+        * 按鍵按下
+        */
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.D);
@@ -256,41 +261,51 @@ public class GamePlay extends Pane {
                         scaleTransition.pause();
                     }
                     pauseTime = System.nanoTime();
-                    timer.pause();
                 }
             }
         });
 
+        /*
+        * 按鍵放開
+        */
         this.setOnKeyReleased(e -> {
             if(e.getCode() == KeyCode.D) {
-                inputManager.handleKeyRelease(KeyCode.D);
+                Judge judgement = inputManager.handleKeyRelease(KeyCode.D);
                 trackPressedEffect[0].setVisible(false);
                 keyReleaseTimeTexts[0].setText("D: " + inputManager.getKeyReleaseTime(KeyCode.D));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.F) {
-                inputManager.handleKeyRelease(KeyCode.F);
+                Judge judgement = inputManager.handleKeyRelease(KeyCode.F);
                 trackPressedEffect[1].setVisible(false);
                 keyReleaseTimeTexts[1].setText("F: " + inputManager.getKeyReleaseTime(KeyCode.F));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.J) {
-                inputManager.handleKeyRelease(KeyCode.J);
+                Judge judgement = inputManager.handleKeyRelease(KeyCode.J);
                 trackPressedEffect[2].setVisible(false);
                 keyReleaseTimeTexts[2].setText("J: " + inputManager.getKeyReleaseTime(KeyCode.J));
+                showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.K) {
-                inputManager.handleKeyRelease(KeyCode.K);
+                Judge judgement = inputManager.handleKeyRelease(KeyCode.K);
                 trackPressedEffect[3].setVisible(false);
                 keyReleaseTimeTexts[3].setText("K: " + inputManager.getKeyReleaseTime(KeyCode.K));
+                showJudgement(judgement);
             }
         });
     }
 
+    /**
+     * 更新遊戲
+     * @param gameTime 遊戲時間
+     */
     private void update(int gameTime) {
         spawnNote(0, gameTime);
         spawnNote(1, gameTime);
         spawnNote(2, gameTime);
         spawnNote(3, gameTime);
-        gameTimer.setText("Time: " + gameTime);
+        //gameTimer.setText("Time: " + gameTime);
 
         missNodeDetection(0, gameTime);
         missNodeDetection(1, gameTime);
@@ -298,6 +313,11 @@ public class GamePlay extends Pane {
         missNodeDetection(3, gameTime);
     }
 
+    /**
+     * 產生音符
+     * @param trackIndex 音軌
+     * @param gameTime 遊戲時間
+     */
     private void spawnNote(int trackIndex, int gameTime) {
         List<Note> notes = beatMap.getTrack(trackIndex).getNotes();
         if(!notes.isEmpty()) {
@@ -306,33 +326,38 @@ public class GamePlay extends Pane {
                 noteFall(note, tracks[trackIndex]);
                 getChildren().add(note);
                 beatMap.getTrack(trackIndex).removeFrontNote();
-                bornedNotes.get(trackIndex).addNote(note);
+                bornNotes.get(trackIndex).addNote(note);
             }
         }
     }
 
+    /**
+     * MISS偵測
+     * @param trackIndex 音軌
+     * @param gameTime 遊戲時間
+     */
     private void missNodeDetection(int trackIndex, int gameTime) {
-        if(!bornedNotes.isEmpty()) {
-            List<Note> notes = bornedNotes.get(trackIndex).getNotes();
+        if(!bornNotes.isEmpty()) {
+            List<Note> notes = bornNotes.get(trackIndex).getNotes();
             if(!notes.isEmpty()) {
                 Note frontNote = notes.get(0);
                 if(gameTime > frontNote.getHitTime() + RhythmGame.acceptableRange) {
                     if(frontNote instanceof Single singleNote) {
                         getChildren().remove(singleNote);
                         singleNote.miss();
-                        bornedNotes.get(trackIndex).removeFrontNote();
+                        bornNotes.get(trackIndex).removeFrontNote();
                     }else if(frontNote instanceof Hold holdNote) {
                         if(holdNote.isEndNote()) {
                             getChildren().remove(holdNote);
                             holdNote.miss();
-                            bornedNotes.get(trackIndex).removeFrontNote();
+                            bornNotes.get(trackIndex).removeFrontNote();
                         }else if(!holdNote.isEndNote()) {
                             getChildren().remove(holdNote);
                             holdNote.miss();
-                            bornedNotes.get(trackIndex).removeFrontNote();
+                            bornNotes.get(trackIndex).removeFrontNote();
                             if(!notes.isEmpty()) {
                                 getChildren().remove(notes.get(0));
-                                bornedNotes.get(trackIndex).removeFrontNote();
+                                bornNotes.get(trackIndex).removeFrontNote();
                             }else {
                                 beatMap.getTrack(trackIndex).removeFrontNote();
                             }
@@ -343,6 +368,11 @@ public class GamePlay extends Pane {
         }
     }
 
+    /**
+     * 音符掉落動畫
+     * @param note 音符
+     * @param track 音軌
+     */
     private void noteFall(Note note, Line track) {
         PathTransition pathTransition = new PathTransition();
         pathTransition.setNode(note);
@@ -373,6 +403,9 @@ public class GamePlay extends Pane {
         });
     }
 
+    /**
+     * 設定背景
+     */
     private void setBackground() {
         background = new ImageView();
         getChildren().add(background);
@@ -395,8 +428,8 @@ public class GamePlay extends Pane {
         }
     }
 
-    public ArrayList<Track> getBornedNotes() {
-        return bornedNotes;
+    public ArrayList<Track> getBornNotes() {
+        return bornNotes;
     }
 
     public BeatMap getBeatMap() {
@@ -415,6 +448,9 @@ public class GamePlay extends Pane {
         return scaleTransitions;
     }
 
+    /**
+     * 離開視窗
+     */
     private static class LeaveWindow extends HBox {
         public Button confirmButton = new Button("Yes");
         public Button retryButton = new Button("Retry");
@@ -443,6 +479,15 @@ public class GamePlay extends Pane {
         protected double curve(double t) {
             return (-t) / (2 * t - 2);
         }//former:2*t*t
+    }
+
+    public static void updateComboText(Judge judge){
+        if(judge == Judge.MISS){
+            comboText.setText("");
+        }else{
+            comboText.setText(String.valueOf(Judgement.combo));
+        }
+
     }
 
     private void showJudgement(Judge judgement){

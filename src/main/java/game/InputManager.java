@@ -29,23 +29,25 @@ public class InputManager {
         int trackIndex = getTrackIndex(keyCode);
         if(trackIndex != -1) {
             keyPressTimes.put(keyCode, (int) ((System.nanoTime() - gamePlay.getStartTime()) / 1_000_000));
-            List<Note> notes = gamePlay.getBornedNotes().get(trackIndex).getNotes();
+            List<Note> notes = gamePlay.getBornNotes().get(trackIndex).getNotes();
             if(!notes.isEmpty()) {
-                Note note = gamePlay.getBornedNotes().get(trackIndex).getNotes().get(0);
-
+                Note note = gamePlay.getBornNotes().get(trackIndex).getNotes().get(0);
+                Judge judge = note.OnHitCheck(keyPressTimes.get(keyCode));
                 if(note instanceof Single singleNote) {
-                    if(singleNote.OnHitCheck(keyPressTimes.get(keyCode)) != Judge.NONE) {
+                    if(judge != Judge.NONE) {
+                        Judgement.judge(judge);
                         deltaTime.put(keyCode, singleNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(singleNote);
-                        gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
-                        return singleNote.OnHitCheck(keyPressTimes.get(keyCode));
+                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        return judge;
                     }
                 }else if(note instanceof Hold holdNote) {
-                    if(holdNote.OnHitCheck(keyPressTimes.get(keyCode)) != Judge.NONE && !holdNote.isEndNote()) {
+                    if(judge != Judge.NONE && !holdNote.isEndNote()) {
+                        Judgement.judge(judge);
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(holdNote);
-                        gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
-                        return holdNote.OnHitCheck(keyPressTimes.get(keyCode));
+                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        return judge;
                     }
                 }
             }
@@ -53,31 +55,39 @@ public class InputManager {
         return Judge.NONE;
     }
 
-    public void handleKeyRelease(KeyCode keyCode) {
+    public Judge handleKeyRelease(KeyCode keyCode) {
         currentlyPressedKeys.remove(keyCode);
         int trackIndex = getTrackIndex(keyCode);
         if(trackIndex != -1) {
             keyReleaseTimes.put(keyCode, (int) ((System.nanoTime() - gamePlay.getStartTime()) / 1_000_000));
-            List<Note> notes = gamePlay.getBornedNotes().get(trackIndex).getNotes();
+            List<Note> notes = gamePlay.getBornNotes().get(trackIndex).getNotes();
             if(!notes.isEmpty()) {
-                Note note = gamePlay.getBornedNotes().get(trackIndex).getNotes().get(0);
+                Note note = gamePlay.getBornNotes().get(trackIndex).getNotes().get(0);
+                Judge judge = note.OnHitCheck(keyReleaseTimes.get(keyCode));
                 if(note instanceof Hold holdNote && holdNote.isEndNote()) {
-                    if(holdNote.OnHitCheck(keyReleaseTimes.get(keyCode)) != Judge.NONE) {
+                    if(judge != Judge.NONE) {
+                        Judgement.judge(judge);
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyReleaseTimes.get(keyCode));
+                        gamePlay.getChildren().remove(holdNote);
+                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        return judge;
                     }else {
                         holdNote.miss();
+                        gamePlay.getChildren().remove(holdNote);
+                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        return Judge.MISS;
                     }
-                    gamePlay.getChildren().remove(holdNote);
-                    gamePlay.getBornedNotes().get(trackIndex).removeFrontNote();
                 }
             }else if(!gamePlay.getBeatMap().getTrack(trackIndex).getNotes().isEmpty()) {
                 Note note = gamePlay.getBeatMap().getTrack(trackIndex).getNotes().get(0);
                 if(note instanceof Hold holdNote && holdNote.isEndNote()) {
                     holdNote.miss();
                     gamePlay.getBeatMap().getTrack(trackIndex).removeFrontNote();
+                    return Judge.MISS;
                 }
             }
         }
+        return Judge.NONE;
     }
 
     private int getTrackIndex(KeyCode keyCode) {
