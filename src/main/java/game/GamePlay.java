@@ -446,6 +446,11 @@ public class GamePlay extends Pane {
     }
 
     private void showJudgement(Judge judgement){
+        for(ImageView j:judgeEffect){
+            if(j.isVisible()){
+                return;
+            }
+        }
         int i=0;
         PauseTransition hideJudgement = new PauseTransition(Duration.seconds(0.1));
         switch (judgement) {
