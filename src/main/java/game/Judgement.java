@@ -1,6 +1,7 @@
 package game;
 
 public class Judgement {
+    public static int perfectPlus = 0;
     public static int perfect = 0;
     public static int great = 0;
     public static int good = 0;
@@ -15,7 +16,7 @@ public class Judgement {
     public static void judge(Judge judge) {
         switch(judge) {
             case PERFECT_PLUS:
-                perfect++;
+                perfectPlus++;
                 combo++;
                 score += 1200;
                 break;
