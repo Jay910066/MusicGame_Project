@@ -96,7 +96,7 @@ public class GamePlay extends Pane {
         judgeEffect[3] = new ImageView(new Image("file:Resources/Images/Good.png"));
         judgeEffect[4] = new ImageView(new Image("file:Resources/Images/Bad.png"));
         for(int i = 0; i < 5; i++) {
-            judgeEffect[i].setX(centerX);
+            judgeEffect[i].setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2)+i*22+30);
             judgeEffect[i].setY(centerY);
             judgeEffect[i].setVisible(false);
             getChildren().add(judgeEffect[i]);
