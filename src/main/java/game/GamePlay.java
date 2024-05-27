@@ -39,11 +39,11 @@ public class GamePlay extends Pane {
     private BeatMap beatMap;
     private Line[] tracks = new Line[4];
     private ArrayList<Track> bornNotes;
+    private boolean[] isHolding = new boolean[4];
     private long startTime;
     private long pauseTime;
     private boolean isPaused = false;
     private AnimationTimer gameLoop;
-    private Text gameTimer;
     private static Text comboText;
     private List<PathTransition> pathTransitions = new ArrayList<>();
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
@@ -123,6 +123,10 @@ public class GamePlay extends Pane {
         bornNotes = new ArrayList<>();
         for(int i = 0; i < 4; i++) {
             bornNotes.add(new Track());
+        }
+
+        for(int i = 0; i < 4; i++) {
+            isHolding[i] = false;
         }
 
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
@@ -324,7 +328,11 @@ public class GamePlay extends Pane {
         spawnNote(1, gameTime);
         spawnNote(2, gameTime);
         spawnNote(3, gameTime);
-        //gameTimer.setText("Time: " + gameTime);
+
+        spawnHoldBody(0, gameTime);
+        spawnHoldBody(1, gameTime);
+        spawnHoldBody(2, gameTime);
+        spawnHoldBody(3, gameTime);
 
         missNodeDetection(0, gameTime);
         missNodeDetection(1, gameTime);
@@ -342,10 +350,28 @@ public class GamePlay extends Pane {
         if(!notes.isEmpty()) {
             Note note = notes.get(0);
             if(gameTime > note.getBornTime()) {
+                if(note instanceof Hold holdNote){
+                    if(holdNote.isStartNote()){
+                        isHolding[trackIndex] = true;
+                    }else if(holdNote.isEndNote()){
+                        isHolding[trackIndex] = false;
+                    }
+                }
                 noteFall(note, tracks[trackIndex]);
                 getChildren().add(note);
                 beatMap.getTrack(trackIndex).removeFrontNote();
                 bornNotes.get(trackIndex).addNote(note);
+            }
+        }
+    }
+
+    private void spawnHoldBody(int trackIndex, int gameTime){
+        double interval = RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed;
+        if(isHolding[trackIndex]){
+            if((int)(gameTime % interval) == 0){
+                Hold holdBody = new Hold(trackIndex);
+                noteFall(holdBody, tracks[trackIndex]);
+                getChildren().add(holdBody);
             }
         }
     }
@@ -370,9 +396,10 @@ public class GamePlay extends Pane {
                             getChildren().remove(holdNote);
                             holdNote.miss();
                             bornNotes.get(trackIndex).removeFrontNote();
-                        }else if(!holdNote.isEndNote()) {
+                        }else if(holdNote.isStartNote()) {
                             getChildren().remove(holdNote);
                             holdNote.miss();
+                            isHolding[trackIndex] = false;
                             bornNotes.get(trackIndex).removeFrontNote();
                             if(!notes.isEmpty()) {
                                 getChildren().remove(notes.get(0));
@@ -413,6 +440,14 @@ public class GamePlay extends Pane {
         scaleTransition.play();
 
         scaleTransitions.add(scaleTransition);
+
+        pathTransition.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            if(note instanceof Hold holdNote && holdNote.isBodyNote()) {
+                if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() / 2) {
+                    getChildren().remove(note);
+                }
+            }
+        });
 
         pathTransition.setOnFinished(e -> {
             getChildren().remove(note);

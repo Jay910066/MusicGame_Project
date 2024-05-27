@@ -42,7 +42,7 @@ public class InputManager {
                         return judge;
                     }
                 }else if(note instanceof Hold holdNote) {
-                    if(judge != Judge.NONE && !holdNote.isEndNote()) {
+                    if(judge != Judge.NONE && holdNote.isStartNote()) {
                         Judgement.judge(judge);
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(holdNote);
