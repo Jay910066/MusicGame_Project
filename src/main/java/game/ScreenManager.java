@@ -2,6 +2,7 @@ package game;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -68,5 +69,15 @@ public class ScreenManager {
         GamePlay gamePlay = new GamePlay(this, selectedSong);
         root.getChildren().clear();
         root.getChildren().add(gamePlay);
+    }
+
+    /**
+     * 切換到結算畫面
+     *
+     */
+    public void switchToResultsScreen(ImageView background) {
+        ResultsScreen resultsScreen = new ResultsScreen(this, background);
+        root.getChildren().clear();
+        root.getChildren().add(resultsScreen);
     }
 }

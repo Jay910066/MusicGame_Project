@@ -6,6 +6,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -49,6 +50,9 @@ public class GamePlay extends Pane {
     private InputManager inputManager = new InputManager(this);
     ImageView[] judgeEffect = new ImageView[5];
 
+    private static int MAX_WIDTH = 1920;
+    private static int MAX_HEIGHT = 1050;
+
     /**
      * 遊戲畫面
      * @param screenManager 畫面管理器
@@ -57,8 +61,8 @@ public class GamePlay extends Pane {
     public GamePlay(ScreenManager screenManager, File selectedSong) {
         this.screenManager = screenManager;
         this.selectedSong = selectedSong;
-        centerX = Screen.getPrimary().getVisualBounds().getWidth() / 2;
-        centerY = Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        centerX = MAX_WIDTH / 2;
+        centerY = MAX_HEIGHT / 2;
         this.setFocusTraversable(true);
         this.requestFocus();
 
@@ -103,6 +107,7 @@ public class GamePlay extends Pane {
             judgeEffect[i].setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2)+i*22+30);
             judgeEffect[i].setY(centerY);
             judgeEffect[i].setVisible(false);
+            judgeEffect[i].setEffect(new Glow(0.3));
             getChildren().add(judgeEffect[i]);
         }
 
@@ -140,6 +145,15 @@ public class GamePlay extends Pane {
                 }
             };
             gameLoop.start();
+        });
+
+        songPlayer.setOnEndOfMedia(() -> {
+            gameLoop.stop();
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+            pause.setOnFinished(e -> {
+                screenManager.switchToResultsScreen(background);
+            });
+            pause.play();
         });
 
         /*遊戲時間*/
@@ -262,6 +276,11 @@ public class GamePlay extends Pane {
                     }
                     pauseTime = System.nanoTime();
                 }
+            }
+            if(e.getCode() == KeyCode.P) {
+                songPlayer.stop();
+                gameLoop.stop();
+                screenManager.switchToResultsScreen(background);
             }
         });
 
