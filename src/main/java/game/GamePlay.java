@@ -95,7 +95,7 @@ public class GamePlay extends Pane {
         comboText = new Text();
         comboText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
         comboText.setFill(Color.WHITE);
-        comboText.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2));
+        comboText.setX(centerX + 200);
         comboText.setY(centerY - 250);
         getChildren().add(comboText);
 
@@ -132,24 +132,29 @@ public class GamePlay extends Pane {
 
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
         MediaPlayer songPlayer = new MediaPlayer(playSong);
+
         songPlayer.setOnReady(() -> {
             Judgement.reset();
             songPlayer.setVolume(Settings.volume / 100.0);
-            songPlayer.play();
-            startTime = System.nanoTime();
-            gameLoop = new AnimationTimer() {
+            PauseTransition wait = new PauseTransition(Duration.seconds(2));
+            wait.setOnFinished(e -> {
+                songPlayer.play();
+                startTime = System.nanoTime();
+                gameLoop = new AnimationTimer() {
 
-                @Override
-                public void handle(long now) {
-                    if(isPaused) {
-                        return;
+                    @Override
+                    public void handle(long now) {
+                        if(isPaused) {
+                            return;
+                        }
+
+                        int gameTime = (int) ((now - startTime) / 1_000_000);
+                        update(gameTime);
                     }
-
-                    int gameTime = (int) ((now - startTime) / 1_000_000);
-                    update(gameTime);
-                }
-            };
-            gameLoop.start();
+                };
+                gameLoop.start();
+            });
+            wait.play();
         });
 
         songPlayer.setOnEndOfMedia(() -> {
