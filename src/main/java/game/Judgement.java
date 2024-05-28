@@ -9,6 +9,7 @@ public class Judgement {
     public static int miss = 0;
     public static int fast = 0;
     public static int late = 0;
+    public static int totalNotes = 0;
     public static double accuracy = 0;
     public static int combo = 0;
     public static int maxCombo = 0;
@@ -19,51 +20,60 @@ public class Judgement {
             case PERFECT_PLUS:
                 perfectPlus++;
                 combo++;
+                totalNotes++;
                 score += 300;
                 break;
             case PERFECT:
                 perfect++;
                 combo++;
+                totalNotes++;
                 score += 300;
                 break;
             case Fast_GREAT:
                 great++;
                 combo++;
+                totalNotes++;
                 fast++;
                 score += 200;
                 break;
             case Fast_GOOD:
                 good++;
                 combo++;
+                totalNotes++;
                 fast++;
                 score += 100;
                 break;
             case Fast_BAD:
                 bad++;
                 combo++;
+                totalNotes++;
                 fast++;
                 score += 50;
                 break;
             case Late_GREAT:
                 great++;
                 combo++;
+                totalNotes++;
                 late++;
                 score += 200;
                 break;
             case Late_GOOD:
                 good++;
                 combo++;
+                totalNotes++;
                 late++;
                 score += 100;
                 break;
             case Late_BAD:
                 bad++;
                 combo++;
+                totalNotes++;
                 late++;
                 score += 50;
                 break;
             case MISS:
                 miss++;
+                totalNotes++;
                 combo = 0;
                 break;
         }
@@ -83,9 +93,24 @@ public class Judgement {
         miss = 0;
         fast = 0;
         late = 0;
+        totalNotes = 0;
         combo = 0;
         maxCombo = 0;
         accuracy = 0;
         score = 0;
+    }
+
+    public static String ranking() {
+        if(accuracy == 1) {
+            return "S";
+        }else if( ((perfectPlus + perfect) / (double) totalNotes >= 0.8 && miss == 0) || ((perfectPlus + perfect) / (double) totalNotes >= 0.9)) {
+            return "A";
+        }else if(((perfectPlus + perfect) / (double) totalNotes >= 0.7 && miss == 0) || ((perfectPlus + perfect) / (double) totalNotes >= 0.8)) {
+            return "B";
+        }else if((perfectPlus + perfect) / (double) totalNotes >= 0.6) {
+            return "C";
+        }else {
+            return "D";
+        }
     }
 }

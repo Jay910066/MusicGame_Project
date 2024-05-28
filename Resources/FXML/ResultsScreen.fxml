@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.effect.Bloom?>
-<?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -13,7 +11,6 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -89,18 +86,6 @@
             <Glow level="1.0" />
          </effect>
       </Text>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutY="44.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Images/Perfect.png" />
-         </image>
-         <effect>
-            <Blend>
-               <topInput>
-                  <ColorAdjust />
-               </topInput>
-            </Blend>
-         </effect>
-      </ImageView>
       <Text fill="WHITE" layoutX="260.0" layoutY="779.0" strokeType="OUTSIDE" strokeWidth="0.0" text="999">
          <font>
             <Font name="System Bold" size="40.0" />
@@ -115,6 +100,22 @@
          </font>
          <effect>
             <Glow level="1.0" />
+         </effect>
+      </Text>
+      <Text fill="WHITE" layoutX="10.0" layoutY="46.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TOGENASHI TOGEARI - Busting My Ctiy">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+         <effect>
+            <Bloom threshold="0.0" />
+         </effect>
+      </Text>
+      <Text fill="WHITE" layoutX="10.0" layoutY="84.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Beatmap by WEDSD">
+         <font>
+            <Font name="System Bold" size="28.0" />
+         </font>
+         <effect>
+            <Bloom threshold="0.0" />
          </effect>
       </Text>
    </children>

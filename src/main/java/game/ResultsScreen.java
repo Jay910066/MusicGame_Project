@@ -19,7 +19,7 @@ import javafx.stage.Screen;
 
 public class ResultsScreen extends Pane {
 
-    public ResultsScreen(ScreenManager screenManager, ImageView background){
+    public ResultsScreen(ScreenManager screenManager, ImageView background, ReadOsu readOsu){
         this.setFocusTraversable(true);
         this.requestFocus();
         setBackground(background);
@@ -27,6 +27,22 @@ public class ResultsScreen extends Pane {
         ImageView resultsPanel = new ImageView("file:Resources/Images/ResultsPanel.png");
         resultsPanel.setEffect(new Bloom(0.5));
         getChildren().add(resultsPanel);
+
+        Text titleText = new Text(readOsu.getArtist() + " - " + readOsu.getTitle());
+        titleText.setStyle("-fx-font-size: 36;-fx-font-weight: bold;");
+        titleText.setFill(Color.WHITE);
+        titleText.setEffect(new Glow(1));
+        titleText.setLayoutX(10);
+        titleText.setLayoutY(46);
+        getChildren().add(titleText);
+
+        Text creatorText = new Text("Beatmap by " + readOsu.getCreator());
+        creatorText.setStyle("-fx-font-size: 28;-fx-font-weight: bold;");
+        creatorText.setFill(Color.WHITE);
+        creatorText.setEffect(new Glow(1));
+        creatorText.setLayoutX(10);
+        creatorText.setLayoutY(84);
+        getChildren().add(creatorText);
 
         Text scoreText = new Text(String.valueOf(Judgement.score));
         scoreText.setStyle("-fx-font-size: 40;-fx-font-weight: bold;");
@@ -82,7 +98,30 @@ public class ResultsScreen extends Pane {
         accuracyText.setLayoutY(779);
         getChildren().addAll(comboText, accuracyText);
 
-
+        ImageView rankImage = new ImageView();
+        rankImage.setLayoutX(1540);
+        rankImage.setLayoutY(480);
+        rankImage.setScaleX(14);
+        rankImage.setScaleY(14);
+        rankImage.setEffect(new Glow(1));
+        switch(Judgement.ranking()) {
+            case "S":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-S-small.png"));
+                break;
+            case "A":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-A-small.png"));
+                break;
+            case "B":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-B-small.png"));
+                break;
+            case "C":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-C-small.png"));
+                break;
+            case "D":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-D-small.png"));
+                break;
+        }
+        getChildren().add(rankImage);
 
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
         quitButton.setTranslateX(0);

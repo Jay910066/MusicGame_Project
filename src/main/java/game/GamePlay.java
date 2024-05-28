@@ -116,7 +116,7 @@ public class GamePlay extends Pane {
         tracks[2] = new Line(680, 135, 1070, 1615);
         tracks[3] = new Line(700, 110, 1500, 940);
 
-        getChildren().addAll(tracks);
+        //getChildren().addAll(tracks);
 
         beatMap = readOsu.getBeatMap();
 
@@ -153,9 +153,9 @@ public class GamePlay extends Pane {
 
         songPlayer.setOnEndOfMedia(() -> {
             gameLoop.stop();
-            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
             pause.setOnFinished(e -> {
-                screenManager.switchToResultsScreen(background);
+                screenManager.switchToResultsScreen(background, readOsu);
             });
             pause.play();
         });
@@ -193,44 +193,44 @@ public class GamePlay extends Pane {
         });
 
         /*------按下按鍵後的時間資訊------*/
-        VBox timeBox = new VBox();
-        getChildren().add(timeBox);
-        timeBox.setLayoutX(centerX - 200);
-        timeBox.setLayoutY(centerY - 300);
-        timeBox.setAlignment(Pos.CENTER);
-
-        HBox PressTimeBox = new HBox();
-        PressTimeBox.setAlignment(Pos.CENTER);
-        String[] key = {"D: ", "F: ", "J: ", "K: "};
-        Text[] keyPressTimeTexts = new Text[4];
-        for(int i = 0; i < 4; i++) {
-            keyPressTimeTexts[i] = new Text(key[0] + 0);
-            keyPressTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-            keyPressTimeTexts[i].setFill(Color.WHITE);
-            PressTimeBox.getChildren().add(keyPressTimeTexts[i]);
-        }
-
-        HBox deltaTimeBox = new HBox();
-        deltaTimeBox.setAlignment(Pos.CENTER);
-        Text[] keyDeltaTimeTexts = new Text[4];
-        for(int i = 0; i < 4; i++) {
-            keyDeltaTimeTexts[i] = new Text(key[0] + "delta: " + 0);
-            keyDeltaTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-            keyDeltaTimeTexts[i].setFill(Color.WHITE);
-            deltaTimeBox.getChildren().add(keyDeltaTimeTexts[i]);
-        }
-
-        HBox ReleaseTimeBox = new HBox();
-        ReleaseTimeBox.setAlignment(Pos.CENTER);
-        Text[] keyReleaseTimeTexts = new Text[4];
-        for(int i = 0; i < 4; i++) {
-            keyReleaseTimeTexts[i] = new Text(key[0] + 0);
-            keyReleaseTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-            keyReleaseTimeTexts[i].setFill(Color.WHITE);
-            ReleaseTimeBox.getChildren().add(keyReleaseTimeTexts[i]);
-        }
-
-        timeBox.getChildren().addAll(PressTimeBox, deltaTimeBox, ReleaseTimeBox);
+        //VBox timeBox = new VBox();
+        //getChildren().add(timeBox);
+        //timeBox.setLayoutX(centerX - 200);
+        //timeBox.setLayoutY(centerY - 300);
+        //timeBox.setAlignment(Pos.CENTER);
+        //
+        //HBox PressTimeBox = new HBox();
+        //PressTimeBox.setAlignment(Pos.CENTER);
+        //String[] key = {"D: ", "F: ", "J: ", "K: "};
+        //Text[] keyPressTimeTexts = new Text[4];
+        //for(int i = 0; i < 4; i++) {
+        //    keyPressTimeTexts[i] = new Text(key[0] + 0);
+        //    keyPressTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        //    keyPressTimeTexts[i].setFill(Color.WHITE);
+        //    PressTimeBox.getChildren().add(keyPressTimeTexts[i]);
+        //}
+        //
+        //HBox deltaTimeBox = new HBox();
+        //deltaTimeBox.setAlignment(Pos.CENTER);
+        //Text[] keyDeltaTimeTexts = new Text[4];
+        //for(int i = 0; i < 4; i++) {
+        //    keyDeltaTimeTexts[i] = new Text(key[0] + "delta: " + 0);
+        //    keyDeltaTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        //    keyDeltaTimeTexts[i].setFill(Color.WHITE);
+        //    deltaTimeBox.getChildren().add(keyDeltaTimeTexts[i]);
+        //}
+        //
+        //HBox ReleaseTimeBox = new HBox();
+        //ReleaseTimeBox.setAlignment(Pos.CENTER);
+        //Text[] keyReleaseTimeTexts = new Text[4];
+        //for(int i = 0; i < 4; i++) {
+        //    keyReleaseTimeTexts[i] = new Text(key[0] + 0);
+        //    keyReleaseTimeTexts[i].setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        //    keyReleaseTimeTexts[i].setFill(Color.WHITE);
+        //    ReleaseTimeBox.getChildren().add(keyReleaseTimeTexts[i]);
+        //}
+        //
+        //timeBox.getChildren().addAll(PressTimeBox, deltaTimeBox, ReleaseTimeBox);
         /*------按下按鍵後的時間資訊------*/
 
         /*
@@ -240,29 +240,29 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.D);
                 trackPressedEffect[0].setVisible(true);
-                keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
-                keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
+                //keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
+                //keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.F) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.F);
                 trackPressedEffect[1].setVisible(true);
-                keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
-                keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
+                //keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
+                //keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.J) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.J);
                 trackPressedEffect[2].setVisible(true);
-                keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
-                keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
+                //keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
+                //keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.K) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.K);
                 trackPressedEffect[3].setVisible(true);
-                keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
-                keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
+                //keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
+                //keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.ESCAPE) {
@@ -284,7 +284,7 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.P) {
                 songPlayer.stop();
                 gameLoop.stop();
-                screenManager.switchToResultsScreen(background);
+                screenManager.switchToResultsScreen(background, readOsu);
             }
         });
 
@@ -295,25 +295,25 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.D);
                 trackPressedEffect[0].setVisible(false);
-                keyReleaseTimeTexts[0].setText("D: " + inputManager.getKeyReleaseTime(KeyCode.D));
+                //keyReleaseTimeTexts[0].setText("D: " + inputManager.getKeyReleaseTime(KeyCode.D));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.F) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.F);
                 trackPressedEffect[1].setVisible(false);
-                keyReleaseTimeTexts[1].setText("F: " + inputManager.getKeyReleaseTime(KeyCode.F));
+                //keyReleaseTimeTexts[1].setText("F: " + inputManager.getKeyReleaseTime(KeyCode.F));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.J) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.J);
                 trackPressedEffect[2].setVisible(false);
-                keyReleaseTimeTexts[2].setText("J: " + inputManager.getKeyReleaseTime(KeyCode.J));
+                //keyReleaseTimeTexts[2].setText("J: " + inputManager.getKeyReleaseTime(KeyCode.J));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.K) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.K);
                 trackPressedEffect[3].setVisible(false);
-                keyReleaseTimeTexts[3].setText("K: " + inputManager.getKeyReleaseTime(KeyCode.K));
+                //keyReleaseTimeTexts[3].setText("K: " + inputManager.getKeyReleaseTime(KeyCode.K));
                 showJudgement(judgement);
             }
         });
@@ -442,9 +442,15 @@ public class GamePlay extends Pane {
         scaleTransitions.add(scaleTransition);
 
         pathTransition.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
-            if(note instanceof Hold holdNote && holdNote.isBodyNote()) {
-                if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() / 2) {
-                    getChildren().remove(note);
+            if(note instanceof Hold holdNote) {
+                if(holdNote.isBodyNote()) {
+                    if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() / 2) {
+                        getChildren().remove(note);
+                    }
+                }else if(holdNote.isStartNote()) {
+                    if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() * 0.01) {
+                        holdNote.toFront();
+                    }
                 }
             }
         });

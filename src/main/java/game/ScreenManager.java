@@ -75,8 +75,8 @@ public class ScreenManager {
      * 切換到結算畫面
      *
      */
-    public void switchToResultsScreen(ImageView background) {
-        ResultsScreen resultsScreen = new ResultsScreen(this, background);
+    public void switchToResultsScreen(ImageView background, ReadOsu readOsu) {
+        ResultsScreen resultsScreen = new ResultsScreen(this, background, readOsu);
         root.getChildren().clear();
         root.getChildren().add(resultsScreen);
     }
