@@ -64,20 +64,12 @@ public abstract class Note extends ImageView{
         hit = true;
     };
 
-    public boolean isHit(){
-        return hit;
-    };
-
     public void miss(){
         Judgement.judge(Judge.MISS);
         miss = true;
     };
 
-    public boolean isMiss(){
-        return miss;
-    };
-
-    public ImageView getImageView(){
-        return noteImage;
+    public double getDelayTime(){
+        return delayTime;
     };
 }

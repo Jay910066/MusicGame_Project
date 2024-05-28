@@ -55,6 +55,7 @@ public class GamePlay extends Pane {
 
     /**
      * 遊戲畫面
+     *
      * @param screenManager 畫面管理器
      * @param selectedSong 選擇的歌曲
      */
@@ -71,16 +72,16 @@ public class GamePlay extends Pane {
         setBackground();
 
         /*
-        * 遊戲畫面
-        * */
+         * 遊戲畫面
+         * */
         PlayField = new ImageView(new Image("file:Resources/Images/PlayField.png"));
         getChildren().add(PlayField);
         PlayField.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
         /*
-        * 音軌特效
-        * */
+         * 音軌特效
+         * */
         ImageView[] trackPressedEffect = new ImageView[4];
         for(int i = 0; i < 4; i++) {
             trackPressedEffect[i] = new ImageView(new Image("file:Resources/Images/Track" + (i + 1) + "_Pressed.png"));
@@ -104,7 +105,7 @@ public class GamePlay extends Pane {
         judgeEffect[3] = new ImageView(new Image("file:Resources/Images/Good.png"));
         judgeEffect[4] = new ImageView(new Image("file:Resources/Images/Bad.png"));
         for(int i = 0; i < 5; i++) {
-            judgeEffect[i].setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2)+i*22+30);
+            judgeEffect[i].setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) + i * 22 + 30);
             judgeEffect[i].setY(centerY);
             judgeEffect[i].setVisible(false);
             judgeEffect[i].setEffect(new Glow(0.3));
@@ -112,8 +113,8 @@ public class GamePlay extends Pane {
         }
 
         tracks[0] = new Line(620, 110, -180, 940);
-        tracks[1] = new Line(640, 135, 260, 1615);
-        tracks[2] = new Line(680, 135, 1070, 1615);
+        tracks[1] = new Line(642.684, 135, 257.316, 1615);
+        tracks[2] = new Line(677.316, 135, 1062.684, 1615);
         tracks[3] = new Line(700, 110, 1500, 940);
 
         //getChildren().addAll(tracks);
@@ -169,8 +170,8 @@ public class GamePlay extends Pane {
 
 
         /*
-        *離開視窗
-        */
+         *離開視窗
+         */
         LeaveWindow leaveWindow = new LeaveWindow();
         leaveWindow.confirmButton.setOnAction(event -> {
             screenManager.switchToSongListMenu();
@@ -234,8 +235,8 @@ public class GamePlay extends Pane {
         /*------按下按鍵後的時間資訊------*/
 
         /*
-        * 按鍵按下
-        */
+         * 按鍵按下
+         */
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.D);
@@ -289,8 +290,8 @@ public class GamePlay extends Pane {
         });
 
         /*
-        * 按鍵放開
-        */
+         * 按鍵放開
+         */
         this.setOnKeyReleased(e -> {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.D);
@@ -321,6 +322,7 @@ public class GamePlay extends Pane {
 
     /**
      * 更新遊戲
+     *
      * @param gameTime 遊戲時間
      */
     private void update(int gameTime) {
@@ -342,6 +344,7 @@ public class GamePlay extends Pane {
 
     /**
      * 產生音符
+     *
      * @param trackIndex 音軌
      * @param gameTime 遊戲時間
      */
@@ -350,14 +353,14 @@ public class GamePlay extends Pane {
         if(!notes.isEmpty()) {
             Note note = notes.get(0);
             if(gameTime > note.getBornTime()) {
-                if(note instanceof Hold holdNote){
-                    if(holdNote.isStartNote()){
+                if(note instanceof Hold holdNote) {
+                    if(holdNote.isStartNote()) {
                         isHolding[trackIndex] = true;
-                    }else if(holdNote.isEndNote()){
+                    }else if(holdNote.isEndNote()) {
                         isHolding[trackIndex] = false;
                     }
                 }
-                noteFall(note, tracks[trackIndex]);
+                noteFall(note, tracks[trackIndex], note.getDelayTime());
                 getChildren().add(note);
                 beatMap.getTrack(trackIndex).removeFrontNote();
                 bornNotes.get(trackIndex).addNote(note);
@@ -365,12 +368,12 @@ public class GamePlay extends Pane {
         }
     }
 
-    private void spawnHoldBody(int trackIndex, int gameTime){
+    private void spawnHoldBody(int trackIndex, int gameTime) {
         double interval = RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed;
-        if(isHolding[trackIndex]){
-            if((int)(gameTime % interval) == 0){
+        if(isHolding[trackIndex]) {
+            if((int) (gameTime % interval) == 0) {
                 Hold holdBody = new Hold(trackIndex);
-                noteFall(holdBody, tracks[trackIndex]);
+                noteFall(holdBody, tracks[trackIndex], holdBody.getDelayTime());
                 getChildren().add(holdBody);
             }
         }
@@ -378,6 +381,7 @@ public class GamePlay extends Pane {
 
     /**
      * MISS偵測
+     *
      * @param trackIndex 音軌
      * @param gameTime 遊戲時間
      */
@@ -416,14 +420,16 @@ public class GamePlay extends Pane {
 
     /**
      * 音符掉落動畫
+     *
      * @param note 音符
      * @param track 音軌
      */
-    private void noteFall(Note note, Line track) {
+    private void noteFall(Note note, Line track, double delayTime) {
+        Duration flowTime = Duration.millis(delayTime * 2 / Settings.flowSpeed);;
         PathTransition pathTransition = new PathTransition();
         pathTransition.setNode(note);
         pathTransition.setPath(track);
-        pathTransition.setDuration(javafx.util.Duration.seconds(RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed));
+        pathTransition.setDuration(flowTime);
         pathTransition.setInterpolator(new NoteFallInterpolation());
         pathTransition.play();
 
@@ -431,7 +437,7 @@ public class GamePlay extends Pane {
 
         ScaleTransition scaleTransition = new ScaleTransition();
         scaleTransition.setNode(note);
-        scaleTransition.setDuration(javafx.util.Duration.seconds(RhythmGame.defaultFlowTime * 2 / Settings.flowSpeed));
+        scaleTransition.setDuration(flowTime);
         scaleTransition.setInterpolator(new NoteFallInterpolation());
         scaleTransition.setFromX(0.12);
         scaleTransition.setFromY(0.12);
@@ -442,12 +448,16 @@ public class GamePlay extends Pane {
         scaleTransitions.add(scaleTransition);
 
         pathTransition.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            //if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() / 2 + RhythmGame.acceptableRange) {
+            //    note.setVisible(false);
+            //}
             if(note instanceof Hold holdNote) {
                 if(holdNote.isBodyNote()) {
                     if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() / 2) {
                         getChildren().remove(note);
                     }
-                }else if(holdNote.isStartNote()) {
+                }
+                if(holdNote.isStartNote()) {
                     if(newValue.toMillis() >= pathTransition.getTotalDuration().toMillis() * 0.01) {
                         holdNote.toFront();
                     }
@@ -538,55 +548,55 @@ public class GamePlay extends Pane {
         @Override
         protected double curve(double t) {
             return (-t) / (2 * t - 2);
-        }//former:2*t*t
+        }
     }
 
-    public static void updateComboText(Judge judge){
-        if(judge == Judge.MISS){
+    public static void updateComboText(Judge judge) {
+        if(judge == Judge.MISS) {
             comboText.setText("");
-        }else{
+        }else {
             comboText.setText(String.valueOf(Judgement.combo));
         }
 
     }
 
-    private void showJudgement(Judge judgement){
-        for(ImageView j:judgeEffect){
-            if(j.isVisible()){
+    private void showJudgement(Judge judgement) {
+        for(ImageView j : judgeEffect) {
+            if(j.isVisible()) {
                 return;
             }
         }
-        int i=0;
+        int i = 0;
         PauseTransition hideJudgement = new PauseTransition(Duration.seconds(0.1));
-        switch (judgement) {
+        switch(judgement) {
             case PERFECT_PLUS:
                 judgeEffect[0].setVisible(true);
                 hideJudgement.play();
                 break;
             case PERFECT:
                 judgeEffect[1].setVisible(true);
-                i=1;
+                i = 1;
                 hideJudgement.play();
                 break;
-            case Fast_GREAT,Late_GREAT:
+            case Fast_GREAT, Late_GREAT:
                 judgeEffect[2].setVisible(true);
-                i=2;
+                i = 2;
                 hideJudgement.play();
                 break;
-            case Fast_GOOD,Late_GOOD:
+            case Fast_GOOD, Late_GOOD:
                 judgeEffect[3].setVisible(true);
-                i=3;
+                i = 3;
                 hideJudgement.play();
                 break;
-            case Fast_BAD,Late_BAD:
+            case Fast_BAD, Late_BAD:
                 judgeEffect[4].setVisible(true);
-                i=4;
+                i = 4;
                 hideJudgement.play();
                 break;
             case NONE:
                 break;
         }
         int finalI = i;
-        hideJudgement.setOnFinished(f-> judgeEffect[finalI].setVisible(false));
+        hideJudgement.setOnFinished(f -> judgeEffect[finalI].setVisible(false));
     }
 }
