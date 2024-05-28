@@ -118,5 +118,13 @@
             <Bloom threshold="0.0" />
          </effect>
       </Text>
+      <ImageView fitHeight="76.0" fitWidth="68.0" layoutX="1540.0" layoutY="480.0" pickOnBounds="true" preserveRatio="true" scaleX="7.0" scaleY="7.0">
+         <image>
+            <Image url="@../Images/rankings/ranking-S-small@2x.png" />
+         </image>
+         <effect>
+            <Glow level="1.0" />
+         </effect>
+      </ImageView>
    </children>
 </Pane>
