@@ -170,7 +170,7 @@ public class SongListMenu extends StackPane {
             previewSongPlayer.stop();
         });
 
-        if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
+        if(new File(songList[selectedIndex].getPath() + "/background.jpg").exists()){
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
         }else {
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));
@@ -211,7 +211,7 @@ public class SongListMenu extends StackPane {
      */
     private void selectItem(int index) {
         readOsu.setSong(songList[index].getPath() + "/Info.osu");
-        if(new File("file:" + songList[selectedIndex].getPath() + "/background.jpg").exists()){
+        if(new File(songList[selectedIndex].getPath() + "/background.jpg").exists()){
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
         }else {
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/cover.jpg"));

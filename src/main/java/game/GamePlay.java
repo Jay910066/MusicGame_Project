@@ -498,7 +498,7 @@ public class GamePlay extends Pane {
         else
             background.setFitWidth(maxDimension * 1);
 
-        if(new File("file:" + selectedSong.getPath() + "/background.jpg").exists()) {
+        if(new File(selectedSong.getPath() + "/background.jpg").exists()) {
             background.setImage(new Image("file:" + selectedSong.getPath() + "/background.jpg"));
         }else {
             background.setImage(new Image("file:" + selectedSong.getPath() + "/cover.jpg"));
