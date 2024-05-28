@@ -412,8 +412,10 @@ public class GamePlay extends Pane {
                             bornNotes.get(trackIndex).removeFrontNote();
                             if(!notes.isEmpty()) {
                                 getChildren().remove(notes.get(0));
+                                bornNotes.get(trackIndex).getNotes().get(0).miss();
                                 bornNotes.get(trackIndex).removeFrontNote();
                             }else {
+                                beatMap.getTrack(trackIndex).getNotes().get(0).miss();
                                 beatMap.getTrack(trackIndex).removeFrontNote();
                             }
                         }
