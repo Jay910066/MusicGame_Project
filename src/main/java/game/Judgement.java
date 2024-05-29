@@ -102,14 +102,16 @@ public class Judgement {
 
     public static String ranking() {
         if(accuracy == 1) {
+            return "X";
+        }else if(accuracy >= 0.95) {
             return "S";
-        }else if( ((perfectPlus + perfect) / (double) totalNotes >= 0.8 && miss == 0) || ((perfectPlus + perfect) / (double) totalNotes >= 0.9)) {
+        }else if(accuracy >= 0.9) {
             return "A";
-        }else if(((perfectPlus + perfect) / (double) totalNotes >= 0.7 && miss == 0) || ((perfectPlus + perfect) / (double) totalNotes >= 0.8)) {
+        }else if(accuracy >= 0.8) {
             return "B";
-        }else if((perfectPlus + perfect) / (double) totalNotes >= 0.6) {
+        }else if(accuracy >= 0.7) {
             return "C";
-        }else {
+        }else{
             return "D";
         }
     }

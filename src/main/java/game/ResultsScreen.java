@@ -101,24 +101,26 @@ public class ResultsScreen extends Pane {
         ImageView rankImage = new ImageView();
         rankImage.setLayoutX(1540);
         rankImage.setLayoutY(480);
-        rankImage.setScaleX(14);
-        rankImage.setScaleY(14);
+        rankImage.setScaleX(7);
+        rankImage.setScaleY(7);
         rankImage.setEffect(new Glow(1));
         switch(Judgement.ranking()) {
+            case "X":
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-X-small@2x.png"));
             case "S":
-                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-S-small.png"));
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-S-small@2x.png"));
                 break;
             case "A":
-                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-A-small.png"));
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-A-small@2x.png"));
                 break;
             case "B":
-                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-B-small.png"));
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-B-small@2x.png"));
                 break;
             case "C":
-                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-C-small.png"));
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-C-small@2x.png"));
                 break;
             case "D":
-                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-D-small.png"));
+                rankImage.setImage(new Image("file:Resources/Images/Rankings/ranking-D-small@2x.png"));
                 break;
         }
         getChildren().add(rankImage);
