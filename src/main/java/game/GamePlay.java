@@ -40,6 +40,8 @@ public class GamePlay extends Pane {
     private Line[] tracks = new Line[4];
     private ArrayList<Track> bornNotes;
     private boolean[] isHolding = new boolean[4];
+    private PauseTransition introWait;
+    private PauseTransition outroWait;
     private long startTime;
     private long pauseTime;
     private boolean isPaused = false;
@@ -49,8 +51,8 @@ public class GamePlay extends Pane {
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
     private InputManager inputManager = new InputManager(this);
     private ImageView[] hitEffect = new ImageView[4];
-    private ScaleTransition hitEffectScaleTransition;
-    private PauseTransition hideHitEffectPauseTransition;
+    private ScaleTransition[] hitEffectScaleTransition = new ScaleTransition[4];
+    private PauseTransition[] hideHitEffectPauseTransition = new PauseTransition[4];
     private ImageView[] judgeEffect = new ImageView[5];
 
     private static int MAX_WIDTH = 1920;
@@ -141,8 +143,8 @@ public class GamePlay extends Pane {
         songPlayer.setOnReady(() -> {
             Judgement.reset();
             songPlayer.setVolume(Settings.volume / 100.0);
-            PauseTransition wait = new PauseTransition(Duration.seconds(2));
-            wait.setOnFinished(e -> {
+            introWait = new PauseTransition(Duration.seconds(2));
+            introWait.setOnFinished(e -> {
                 songPlayer.play();
                 startTime = System.nanoTime();
                 gameLoop = new AnimationTimer() {
@@ -159,16 +161,16 @@ public class GamePlay extends Pane {
                 };
                 gameLoop.start();
             });
-            wait.play();
+            introWait.play();
         });
 
         songPlayer.setOnEndOfMedia(() -> {
             gameLoop.stop();
-            PauseTransition pause = new PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(e -> {
+            outroWait = new PauseTransition(Duration.seconds(2));
+            outroWait.setOnFinished(e -> {
                 screenManager.switchToResultsScreen(background, readOsu);
             });
-            pause.play();
+            outroWait.play();
         });
 
         /*遊戲時間*/
@@ -184,6 +186,10 @@ public class GamePlay extends Pane {
          */
         LeaveWindow leaveWindow = new LeaveWindow();
         leaveWindow.confirmButton.setOnAction(event -> {
+            introWait.stop();
+            if(outroWait != null) {
+                outroWait.stop();
+            }
             screenManager.switchToSongListMenu();
         });
         leaveWindow.retryButton.setOnAction(event -> {
@@ -192,7 +198,15 @@ public class GamePlay extends Pane {
         });
         leaveWindow.continueButton.setOnAction(event -> {
             getChildren().remove(leaveWindow);
-            songPlayer.play();
+            if(songPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                songPlayer.play();
+            }
+            if(introWait.getStatus() == Animation.Status.PAUSED) {
+                introWait.play();
+            }
+            if(outroWait != null) {
+                outroWait.play();
+            }
             isPaused = false;
             startTime += System.nanoTime() - pauseTime;
             for(PathTransition pathTransition : pathTransitions) {
@@ -286,6 +300,10 @@ public class GamePlay extends Pane {
                     leaveWindow.setLayoutX(centerX - 400);
                     leaveWindow.setLayoutY(centerY - 300);
                     songPlayer.pause();
+                    introWait.pause();
+                    if(outroWait != null) {
+                        outroWait.pause();
+                    }
                     isPaused = true;
                     for(PathTransition pathTransition : pathTransitions) {
                         pathTransition.pause();
@@ -584,7 +602,7 @@ public class GamePlay extends Pane {
             hitEffect[i].setVisible(false);
             getChildren().add(hitEffect[i]);
         }
-        hitEffect[0].setLayoutX(160);
+        hitEffect[0].setLayoutX(115);
         hitEffect[0].setLayoutY(420);
         hitEffect[0].setRotate(90);
         hitEffect[1].setLayoutX(345);
@@ -601,23 +619,23 @@ public class GamePlay extends Pane {
             hitEffect[trackIndex].setVisible(true);
             hitEffect[trackIndex].toFront();
 
-            if(hitEffectScaleTransition != null) {
-                hitEffectScaleTransition.stop();
+            if(hitEffectScaleTransition[trackIndex] != null) {
+                hitEffectScaleTransition[trackIndex].stop();
             }
-            if(hideHitEffectPauseTransition != null) {
-                hideHitEffectPauseTransition.stop();
+            if(hideHitEffectPauseTransition[trackIndex] != null) {
+                hideHitEffectPauseTransition[trackIndex].stop();
             }
 
-            hitEffectScaleTransition = new ScaleTransition(Duration.seconds(0.1), hitEffect[trackIndex]);
-            hitEffectScaleTransition.setFromX(0.1);
-            hitEffectScaleTransition.setFromY(0.1);
-            hitEffectScaleTransition.setToX(1);
-            hitEffectScaleTransition.setToY(1);
-            hitEffectScaleTransition.play();
+            hitEffectScaleTransition[trackIndex] = new ScaleTransition(Duration.seconds(0.1), hitEffect[trackIndex]);
+            hitEffectScaleTransition[trackIndex].setFromX(0.1);
+            hitEffectScaleTransition[trackIndex].setFromY(0.1);
+            hitEffectScaleTransition[trackIndex].setToX(1);
+            hitEffectScaleTransition[trackIndex].setToY(1);
+            hitEffectScaleTransition[trackIndex].play();
 
-            hideHitEffectPauseTransition = new PauseTransition(Duration.seconds(0.1));
-            hideHitEffectPauseTransition.setOnFinished(e -> hitEffect[trackIndex].setVisible(false));
-            hideHitEffectPauseTransition.play();
+            hideHitEffectPauseTransition[trackIndex] = new PauseTransition(Duration.seconds(0.1));
+            hideHitEffectPauseTransition[trackIndex].setOnFinished(e -> hitEffect[trackIndex].setVisible(false));
+            hideHitEffectPauseTransition[trackIndex].play();
         }
     }
 
