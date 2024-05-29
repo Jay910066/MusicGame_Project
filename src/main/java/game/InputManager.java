@@ -6,6 +6,7 @@ import java.util.*;
 
 public class InputManager {
     private GamePlay gamePlay;
+    private SoundEffect[] soundEffects = new SoundEffect[4];
     private Set<KeyCode> currentlyPressedKeys = new HashSet<>();
     private Map<KeyCode, Integer> keyPressTimes = new HashMap<>();
     private Map<KeyCode, Integer> deltaTime = new HashMap<>();
@@ -13,6 +14,9 @@ public class InputManager {
 
     public InputManager(GamePlay gamePlay) {
         this.gamePlay = gamePlay;
+        for(int i = 0; i < 4; i++) {
+            soundEffects[i] = new SoundEffect();
+        }
         for(KeyCode keyCode : Arrays.asList(KeyCode.D, KeyCode.F, KeyCode.J, KeyCode.K)) {
             keyPressTimes.put(keyCode, 0);
             deltaTime.put(keyCode, 0);
@@ -39,6 +43,7 @@ public class InputManager {
                         deltaTime.put(keyCode, singleNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(singleNote);
                         gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        soundEffects[trackIndex].playHitSound();
                         return judge;
                     }
                 }else if(note instanceof Hold holdNote) {
@@ -47,10 +52,15 @@ public class InputManager {
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(holdNote);
                         gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        soundEffects[trackIndex].playHitSound();
                         return judge;
                     }
                 }
+                if(judge == Judge.NONE) {
+                    soundEffects[trackIndex].playTapSound();
+                }
             }
+            soundEffects[trackIndex].playTapSound();
         }
         return Judge.NONE;
     }
