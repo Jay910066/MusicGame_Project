@@ -31,9 +31,19 @@
             <Image url="@../Images/Right_middle.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="451.0" fitWidth="144.0" layoutX="186.0" layoutY="296.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="451.0" fitWidth="144.0" layoutX="175.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../Images/Left_side.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="771.0" layoutY="771.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/lighting.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="210.0" fitWidth="210.0" layoutX="115.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true" rotate="92.0">
+         <image>
+            <Image url="@../Images/lighting.png" />
          </image>
       </ImageView>
    </children>
