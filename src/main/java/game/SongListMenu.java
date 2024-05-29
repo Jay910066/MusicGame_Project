@@ -1,5 +1,6 @@
 package game;
 
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -180,8 +181,12 @@ public class SongListMenu extends StackPane {
         selectItem(selectedIndex);
 
         songBoxes[selectedIndex].setOnMouseClicked(e -> {
-            screenManager.switchToGamePlay(songList[selectedIndex]);
-            previewSongPlayer.stop();
+            if(readOsu.is4K_Mania()) {
+                screenManager.switchToGamePlay(songList[selectedIndex]);
+                previewSongPlayer.stop();
+            }else{
+                showModeNotSupportedMessage();
+            }
         });
 
         this.setOnKeyPressed(e ->{
@@ -189,8 +194,12 @@ public class SongListMenu extends StackPane {
                 screenManager.switchToMainMenu();
                 previewSongPlayer.stop();
             }else if(e.getCode() == KeyCode.ENTER) {
-                screenManager.switchToGamePlay(songList[selectedIndex]);
-                previewSongPlayer.stop();
+                if(readOsu.is4K_Mania()) {
+                    screenManager.switchToGamePlay(songList[selectedIndex]);
+                    previewSongPlayer.stop();
+                }else{
+                    showModeNotSupportedMessage();
+                }
             }
         });
     }
@@ -250,5 +259,14 @@ public class SongListMenu extends StackPane {
         songBox5.setScaleX(0.8);
         songBox5.setScaleY(0.8);
         selector.getChildren().addAll(songBox1, songBox2, songBox3, songBox4, songBox5);
+    }
+
+    private void showModeNotSupportedMessage(){
+        Label message = new Label("This mode is not supported yet.");
+        message.setStyle("-fx-font-weight: bold; -fx-font-size: 30; -fx-text-fill: white; -fx-background-color: rgba(0, 0, 0, 0.5); -fx-padding: 10;");
+        getChildren().add(message);
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.2));
+        pause.setOnFinished(e -> getChildren().remove(message));
+        pause.play();
     }
 }

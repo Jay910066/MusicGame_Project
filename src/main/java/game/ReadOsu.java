@@ -11,9 +11,11 @@ import java.io.IOException;
 public class ReadOsu {
     private File osuFile;
     private String PreviewTime;
+    private int mode;
     private String Title;
     private String Artist;
     private String Creator;
+    private String keyCount;
 
     ReadOsu() {
         PreviewTime = "";
@@ -92,12 +94,16 @@ public class ReadOsu {
         //取得歌曲資訊
         if(line.startsWith("PreviewTime:")) {
             PreviewTime = line.substring(12);
+        }else if(line.startsWith("Mode:")) {
+            mode = Integer.parseInt(line.substring(5));
         }else if(line.startsWith("TitleUnicode:")) {
             Title = line.substring(13);
         }else if(line.startsWith("ArtistUnicode:")) {
             Artist = line.substring(14);
         }else if(line.startsWith("Creator:")) {
             Creator = line.substring(8);
+        }else if(line.startsWith("CircleSize:")){
+            keyCount = line.substring(11);
         }
     }
 
@@ -131,5 +137,13 @@ public class ReadOsu {
      */
     public String getCreator() {
         return Creator;
+    }
+
+    /**
+     * 取得遊玩模式
+     * @return 遊玩模式
+     */
+    public boolean is4K_Mania(){
+        return mode == 3 && keyCount.equals("4");
     }
 }
