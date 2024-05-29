@@ -14,7 +14,7 @@ public class SoundEffect {
 
     SoundEffect() {
         tapSound = new Media(new File("Resources/Audio/Tap.mp3").toURI().toString());
-        hitSound = new Media(new File("Resources/Audio/Hit.mp3").toURI().toString());
+        hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
         tapSoundPlayer = new MediaPlayer(tapSound);
         hitSoundPlayer = new MediaPlayer(hitSound);
     }
