@@ -48,7 +48,10 @@ public class GamePlay extends Pane {
     private List<PathTransition> pathTransitions = new ArrayList<>();
     private List<ScaleTransition> scaleTransitions = new ArrayList<>();
     private InputManager inputManager = new InputManager(this);
-    ImageView[] judgeEffect = new ImageView[5];
+    private ImageView[] hitEffect = new ImageView[4];
+    private ScaleTransition hitEffectScaleTransition;
+    private PauseTransition hideHitEffectPauseTransition;
+    private ImageView[] judgeEffect = new ImageView[5];
 
     private static int MAX_WIDTH = 1920;
     private static int MAX_HEIGHT = 1050;
@@ -98,6 +101,8 @@ public class GamePlay extends Pane {
         comboText.setX(centerX + 200);
         comboText.setY(centerY - 250);
         getChildren().add(comboText);
+
+        setHitEffect();
 
         judgeEffect[0] = new ImageView(new Image("file:Resources/Images/Perfect+.png"));
         judgeEffect[1] = new ImageView(new Image("file:Resources/Images/Perfect.png"));
@@ -246,6 +251,7 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.D);
                 trackPressedEffect[0].setVisible(true);
+                showHitEffect(0, judgement);
                 //keyPressTimeTexts[0].setText("D: " + inputManager.getKeyPressTime(KeyCode.D));
                 //keyDeltaTimeTexts[0].setText("D_deltaTime: " + inputManager.getDeltaTime(KeyCode.D));
                 showJudgement(judgement);
@@ -253,6 +259,7 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.F) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.F);
                 trackPressedEffect[1].setVisible(true);
+                showHitEffect(1, judgement);
                 //keyPressTimeTexts[1].setText("F: " + inputManager.getKeyPressTime(KeyCode.F));
                 //keyDeltaTimeTexts[1].setText("F_deltaTime: " + inputManager.getDeltaTime(KeyCode.F));
                 showJudgement(judgement);
@@ -260,6 +267,7 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.J) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.J);
                 trackPressedEffect[2].setVisible(true);
+                showHitEffect(2, judgement);
                 //keyPressTimeTexts[2].setText("J: " + inputManager.getKeyPressTime(KeyCode.J));
                 //keyDeltaTimeTexts[2].setText("J_deltaTime: " + inputManager.getDeltaTime(KeyCode.J));
                 showJudgement(judgement);
@@ -267,6 +275,7 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.K) {
                 Judge judgement = inputManager.handleKeyPress(KeyCode.K);
                 trackPressedEffect[3].setVisible(true);
+                showHitEffect(3, judgement);
                 //keyPressTimeTexts[3].setText("K: " + inputManager.getKeyPressTime(KeyCode.K));
                 //keyDeltaTimeTexts[3].setText("K_deltaTime: " + inputManager.getDeltaTime(KeyCode.K));
                 showJudgement(judgement);
@@ -301,24 +310,28 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.D) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.D);
                 trackPressedEffect[0].setVisible(false);
+                showHitEffect(0, judgement);
                 //keyReleaseTimeTexts[0].setText("D: " + inputManager.getKeyReleaseTime(KeyCode.D));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.F) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.F);
                 trackPressedEffect[1].setVisible(false);
+                showHitEffect(1, judgement);
                 //keyReleaseTimeTexts[1].setText("F: " + inputManager.getKeyReleaseTime(KeyCode.F));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.J) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.J);
                 trackPressedEffect[2].setVisible(false);
+                showHitEffect(2, judgement);
                 //keyReleaseTimeTexts[2].setText("J: " + inputManager.getKeyReleaseTime(KeyCode.J));
                 showJudgement(judgement);
             }
             if(e.getCode() == KeyCode.K) {
                 Judge judgement = inputManager.handleKeyRelease(KeyCode.K);
                 trackPressedEffect[3].setVisible(false);
+                showHitEffect(3, judgement);
                 //keyReleaseTimeTexts[3].setText("K: " + inputManager.getKeyReleaseTime(KeyCode.K));
                 showJudgement(judgement);
             }
@@ -519,14 +532,6 @@ public class GamePlay extends Pane {
         return startTime;
     }
 
-    public List<PathTransition> getPathTransitions() {
-        return pathTransitions;
-    }
-
-    public List<ScaleTransition> getScaleTransitions() {
-        return scaleTransitions;
-    }
-
     /**
      * 離開視窗
      */
@@ -571,6 +576,49 @@ public class GamePlay extends Pane {
             comboText.setText(String.valueOf(Judgement.combo));
         }
 
+    }
+
+    private void setHitEffect(){
+        for(int i = 0; i < 4; i++) {
+            hitEffect[i] = new ImageView(new Image("file:Resources/Images/lighting.png"));
+            hitEffect[i].setVisible(false);
+            getChildren().add(hitEffect[i]);
+        }
+        hitEffect[0].setLayoutX(160);
+        hitEffect[0].setLayoutY(420);
+        hitEffect[0].setRotate(90);
+        hitEffect[1].setLayoutX(345);
+        hitEffect[1].setLayoutY(770);
+        hitEffect[2].setLayoutX(765);
+        hitEffect[2].setLayoutY(770);
+        hitEffect[3].setLayoutX(995);
+        hitEffect[3].setLayoutY(420);
+        hitEffect[3].setRotate(270);
+    }
+
+    private void showHitEffect(int trackIndex, Judge judge) {
+        if(judge != Judge.NONE && judge != Judge.MISS) {
+            hitEffect[trackIndex].setVisible(true);
+            hitEffect[trackIndex].toFront();
+
+            if(hitEffectScaleTransition != null) {
+                hitEffectScaleTransition.stop();
+            }
+            if(hideHitEffectPauseTransition != null) {
+                hideHitEffectPauseTransition.stop();
+            }
+
+            hitEffectScaleTransition = new ScaleTransition(Duration.seconds(0.1), hitEffect[trackIndex]);
+            hitEffectScaleTransition.setFromX(0.1);
+            hitEffectScaleTransition.setFromY(0.1);
+            hitEffectScaleTransition.setToX(1);
+            hitEffectScaleTransition.setToY(1);
+            hitEffectScaleTransition.play();
+
+            hideHitEffectPauseTransition = new PauseTransition(Duration.seconds(0.1));
+            hideHitEffectPauseTransition.setOnFinished(e -> hitEffect[trackIndex].setVisible(false));
+            hideHitEffectPauseTransition.play();
+        }
     }
 
     private void showJudgement(Judge judgement) {
