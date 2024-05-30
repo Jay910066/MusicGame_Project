@@ -713,6 +713,8 @@ public class GamePlay extends Pane {
             if(comboTextScaleTransition != null) {
                 comboTextScaleTransition.stop();
             }
+
+            //Combo放大動畫
             comboTextScaleTransition = new ScaleTransition(Duration.seconds(0.1), comboText);
             comboTextScaleTransition.setFromX(0.7);
             comboTextScaleTransition.setFromY(0.7);
