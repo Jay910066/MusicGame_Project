@@ -2,8 +2,11 @@ package game;
 
 import java.util.ArrayList;
 
+/**
+ * 譜面
+ */
 public class BeatMap {
-    private ArrayList<Track> tracks;
+    private final ArrayList<Track> tracks;
 
     public BeatMap() {
         tracks = new ArrayList<Track>(4);
@@ -12,6 +15,10 @@ public class BeatMap {
         }
     }
 
+    /**
+     * 取得音軌
+     * @return 音軌
+     */
     public Track getTrack(int index) {
         return tracks.get(index);
     }

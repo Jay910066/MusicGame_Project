@@ -6,32 +6,33 @@ import javafx.util.Duration;
 
 import java.io.File;
 
+/**
+ * 音效控制
+ */
 public class SoundEffect {
-    private static Media tapSound;
-    private static Media hitSound;
-    private MediaPlayer tapSoundPlayer;
-    private MediaPlayer hitSoundPlayer;
+    private final MediaPlayer tapSoundPlayer; //點擊音效
+    private final MediaPlayer hitSoundPlayer; //擊中音效
 
     SoundEffect() {
-        tapSound = new Media(new File("Resources/Audio/Tap.mp3").toURI().toString());
-        hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
+        //載入音效
+        Media tapSound = new Media(new File("Resources/Audio/Tap.mp3").toURI().toString());
         tapSoundPlayer = new MediaPlayer(tapSound);
+
+        Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
         hitSoundPlayer = new MediaPlayer(hitSound);
     }
 
-    public void playSoundEffect(Judge judge) {
-        if(judge == game.Judge.NONE) {
-            playTapSound();
-        }else if(judge != Judge.MISS) {
-            playHitSound();
-        }
-    }
-
+    /**
+     * 播放點擊音效
+     */
     public void playTapSound() {
         tapSoundPlayer.seek(Duration.ZERO);
         tapSoundPlayer.play();
     }
 
+    /**
+     * 播放擊中音效
+     */
     public void playHitSound() {
         hitSoundPlayer.seek(Duration.ZERO);
         hitSoundPlayer.play();

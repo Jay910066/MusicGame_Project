@@ -3,14 +3,18 @@ package game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * 單擊音符
+ */
 public class Single extends Note {
-    private int track;
-    private int hitTime;
-    private boolean hit = false;
-    private boolean kill = false;
-
+    /**
+     * @param track 音符軌道
+     * @param hitTime 音符抵達判定點的時間
+     */
     Single(int track, int hitTime) {
         super(track, hitTime);
+
+        //設定音符圖片
         if(track == 0) {
             this.setImage(new Image("file:Resources/Images/Left_side.png"));
         }else if(track == 1) {

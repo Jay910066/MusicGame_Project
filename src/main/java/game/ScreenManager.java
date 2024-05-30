@@ -74,6 +74,8 @@ public class ScreenManager {
     /**
      * 切換到結算畫面
      *
+     * @param background 背景圖片
+     * @param readOsu 讀取.osu檔案
      */
     public void switchToResultsScreen(ImageView background, ReadOsu readOsu) {
         ResultsScreen resultsScreen = new ResultsScreen(this, background, readOsu);

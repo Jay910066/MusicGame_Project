@@ -36,10 +36,12 @@ public class GamePlay extends Pane {
     private double centerY;
     private ImageView background;
     private ImageView PlayField;
+    private HBox leaveWindow;
     private BeatMap beatMap;
     private Line[] tracks = new Line[4];
     private ArrayList<Track> bornNotes;
     private boolean[] isHolding = new boolean[4];
+    private final MediaPlayer songPlayer;
     private PauseTransition introWait;
     private PauseTransition outroWait;
     private long startTime;
@@ -60,7 +62,6 @@ public class GamePlay extends Pane {
 
     /**
      * 遊戲畫面
-     *
      * @param screenManager 畫面管理器
      * @param selectedSong 選擇的歌曲
      */
@@ -84,6 +85,7 @@ public class GamePlay extends Pane {
         PlayField.setX(centerX - (PlayField.getBoundsInParent().getWidth() / 2) - 300);
         PlayField.setY(centerY - (PlayField.getBoundsInParent().getHeight() / 2));
 
+        setLeaveWindow();
         /*
          * 音軌特效
          * */
@@ -138,7 +140,7 @@ public class GamePlay extends Pane {
         }
 
         Media playSong = new Media(new File(selectedSong, "song.mp3").toURI().toString());
-        MediaPlayer songPlayer = new MediaPlayer(playSong);
+        songPlayer = new MediaPlayer(playSong);
 
         songPlayer.setOnReady(() -> {
             Judgement.reset();
@@ -180,42 +182,6 @@ public class GamePlay extends Pane {
         //gameTimer.setLayoutY(centerY - 300);
         //getChildren().add(gameTimer);
 
-
-        /*
-         *離開視窗
-         */
-        LeaveWindow leaveWindow = new LeaveWindow();
-        leaveWindow.confirmButton.setOnAction(event -> {
-            introWait.stop();
-            if(outroWait != null) {
-                outroWait.stop();
-            }
-            screenManager.switchToSongListMenu();
-        });
-        leaveWindow.retryButton.setOnAction(event -> {
-            getChildren().remove(leaveWindow);
-            screenManager.switchToGamePlay(selectedSong);
-        });
-        leaveWindow.continueButton.setOnAction(event -> {
-            getChildren().remove(leaveWindow);
-            if(songPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                songPlayer.play();
-            }
-            if(introWait.getStatus() == Animation.Status.PAUSED) {
-                introWait.play();
-            }
-            if(outroWait != null) {
-                outroWait.play();
-            }
-            isPaused = false;
-            startTime += System.nanoTime() - pauseTime;
-            for(PathTransition pathTransition : pathTransitions) {
-                pathTransition.play();
-            }
-            for(ScaleTransition scaleTransition : scaleTransitions) {
-                scaleTransition.play();
-            }
-        });
 
         /*------按下按鍵後的時間資訊------*/
         //VBox timeBox = new VBox();
@@ -297,8 +263,6 @@ public class GamePlay extends Pane {
             if(e.getCode() == KeyCode.ESCAPE) {
                 if(!getChildren().contains(leaveWindow)) {
                     getChildren().add(leaveWindow);
-                    leaveWindow.setLayoutX(centerX - 400);
-                    leaveWindow.setLayoutY(centerY - 300);
                     songPlayer.pause();
                     introWait.pause();
                     if(outroWait != null) {
@@ -315,8 +279,10 @@ public class GamePlay extends Pane {
                 }
             }
             if(e.getCode() == KeyCode.P) {
-                songPlayer.stop();
-                gameLoop.stop();
+                if(songPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    songPlayer.stop();
+                    gameLoop.stop();
+                }
                 screenManager.switchToResultsScreen(background, readOsu);
             }
         });
@@ -538,55 +504,84 @@ public class GamePlay extends Pane {
         }
     }
 
-    public ArrayList<Track> getBornNotes() {
-        return bornNotes;
-    }
+    /**
+     * 設置離開視窗
+     */
+    private void setLeaveWindow(){
+        //離開視窗
+        leaveWindow = new HBox();
+        leaveWindow.setAlignment(Pos.CENTER);
+        leaveWindow.setSpacing(40);
+        leaveWindow.setLayoutX(centerX - 400);
+        leaveWindow.setLayoutY(centerY - 300);
+        leaveWindow.setMinWidth(800);
+        leaveWindow.setMinHeight(600);
+        leaveWindow.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
 
-    public BeatMap getBeatMap() {
-        return beatMap;
-    }
+        //離開視窗訊息
+        Label message = new Label("Are you sure you want to exit?");
+        message.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-    public long getStartTime() {
-        return startTime;
+        //離開視窗按鈕
+        Button confirmButton = new Button("Yes");
+        confirmButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        confirmButton.setOnAction(event -> {
+            introWait.stop();
+            if(outroWait != null) {
+                outroWait.stop();
+            }
+            screenManager.switchToSongListMenu();
+        });
+
+        //重試按鈕
+        Button retryButton = new Button("Retry");
+        retryButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        retryButton.setOnAction(event -> {
+            getChildren().remove(leaveWindow);
+            screenManager.switchToGamePlay(selectedSong);
+        });
+
+        //繼續按鈕
+        Button continueButton = new Button("Continue");
+        continueButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        continueButton.setOnAction(event -> {
+            getChildren().remove(leaveWindow);
+
+            //繼續播放音樂
+            if(songPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                songPlayer.play();
+            }
+
+            //繼續遊戲時間
+            if(introWait.getStatus() == Animation.Status.PAUSED) {
+                introWait.play();
+            }
+
+            //繼續歌曲結束後的等待
+            if(outroWait != null) {
+                outroWait.play();
+            }
+
+            isPaused = false; //取消暫停
+            startTime += System.nanoTime() - pauseTime; //更新開始時間
+
+            //繼續音符掉落動畫
+            for(PathTransition pathTransition : pathTransitions) {
+                pathTransition.play();
+            }
+            for(ScaleTransition scaleTransition : scaleTransitions) {
+                scaleTransition.play();
+            }
+        });
+
+        leaveWindow.getChildren().addAll(message, confirmButton, retryButton, continueButton);
     }
 
     /**
-     * 離開視窗
+     * 更新Combo數字
+     *
+     * @param judge 評價
      */
-    private static class LeaveWindow extends HBox {
-        public Button confirmButton = new Button("Yes");
-        public Button retryButton = new Button("Retry");
-        public Button continueButton = new Button("Continue");
-
-        public LeaveWindow() {
-            this.setAlignment(Pos.CENTER);
-            this.setSpacing(40);
-            this.setMinWidth(800);
-            this.setMinHeight(600);
-
-            Label message = new Label("Are you sure you want to exit?");
-            message.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
-
-            confirmButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-            retryButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-            continueButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-            this.getChildren().addAll(message, confirmButton, retryButton, continueButton);
-            this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-        }
-    }
-
-    public static class NoteFallInterpolation extends Interpolator {
-        int i;
-        NoteFallInterpolation(int i) {
-            this.i=i;
-        }
-        @Override
-        protected double curve(double t) {
-            return (-t-0.033*i) / (2 * t + 0.066*i - 2);
-        }//former:2*t*t
-    }
-
     public static void updateComboText(Judge judge) {
         if(judge == Judge.MISS) {
             comboText.setText("");
@@ -596,6 +591,9 @@ public class GamePlay extends Pane {
 
     }
 
+    /**
+     * 設定打擊特效
+     */
     private void setHitEffect(){
         for(int i = 0; i < 4; i++) {
             hitEffect[i] = new ImageView(new Image("file:Resources/Images/lighting.png"));
@@ -614,11 +612,20 @@ public class GamePlay extends Pane {
         hitEffect[3].setRotate(270);
     }
 
+    /**
+     * 顯示打擊特效
+     *
+     * @param trackIndex 音軌
+     * @param judge 評價
+     */
     private void showHitEffect(int trackIndex, Judge judge) {
+
+        //如果評價不是MISS或NONE，則顯示打擊特效
         if(judge != Judge.NONE && judge != Judge.MISS) {
             hitEffect[trackIndex].setVisible(true);
             hitEffect[trackIndex].toFront();
 
+            //停止之前的特效動畫
             if(hitEffectScaleTransition[trackIndex] != null) {
                 hitEffectScaleTransition[trackIndex].stop();
             }
@@ -626,6 +633,7 @@ public class GamePlay extends Pane {
                 hideHitEffectPauseTransition[trackIndex].stop();
             }
 
+            //播放特效動畫
             hitEffectScaleTransition[trackIndex] = new ScaleTransition(Duration.seconds(0.1), hitEffect[trackIndex]);
             hitEffectScaleTransition[trackIndex].setFromX(0.1);
             hitEffectScaleTransition[trackIndex].setFromY(0.1);
@@ -639,6 +647,11 @@ public class GamePlay extends Pane {
         }
     }
 
+    /**
+     * 顯示評價
+     *
+     * @param judgement 評價
+     */
     private void showJudgement(Judge judgement) {
         for(ImageView j : judgeEffect) {
             if(j.isVisible()) {
@@ -646,6 +659,8 @@ public class GamePlay extends Pane {
             }
         }
         int i = 0;
+
+        //顯示評價
         PauseTransition hideJudgement = new PauseTransition(Duration.seconds(0.1));
         switch(judgement) {
             case PERFECT_PLUS:
@@ -677,5 +692,46 @@ public class GamePlay extends Pane {
         }
         int finalI = i;
         hideJudgement.setOnFinished(f -> judgeEffect[finalI].setVisible(false));
+    }
+
+    /**
+     * 取得已渲染音符
+     *
+     * @return 已渲染音符
+     */
+    public ArrayList<Track> getBornNotes() {
+        return bornNotes;
+    }
+
+    /**
+     * 取得譜面
+     *
+     * @return 譜面
+     */
+    public BeatMap getBeatMap() {
+        return beatMap;
+    }
+
+    /**
+     * 取得開始時間
+     *
+     * @return 開始時間
+     */
+    public long getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * 音符下落動畫插值
+     */
+    public static class NoteFallInterpolation extends Interpolator {
+        int i;
+        NoteFallInterpolation(int i) {
+            this.i=i;
+        }
+        @Override
+        protected double curve(double t) {
+            return (-t-0.033*i) / (2 * t + 0.066*i - 2);
+        }//former:2*t*t
     }
 }

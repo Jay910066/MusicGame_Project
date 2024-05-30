@@ -9,20 +9,13 @@ import java.io.IOException;
  * 讀取.osu檔案
  */
 public class ReadOsu {
-    private File osuFile;
-    private String PreviewTime;
-    private int mode;
-    private String Title;
-    private String Artist;
-    private String Creator;
-    private String keyCount;
-
-    ReadOsu() {
-        PreviewTime = "";
-        Title = "";
-        Artist = "";
-        Creator = "";
-    }
+    private File osuFile; //osu檔案
+    private String PreviewTime; //歌曲預覽時間
+    private int mode; //遊玩模式
+    private String Title; //歌曲標題
+    private String Artist; //歌曲演出者
+    private String Creator; //譜面作者
+    private String keyCount; //鍵數
 
     ReadOsu(String path) {
         setSong(path);
@@ -51,26 +44,33 @@ public class ReadOsu {
      * @return 譜面
      */
     public BeatMap getBeatMap() {
-        BeatMap beatMap = new BeatMap();
+        BeatMap beatMap = new BeatMap(); //譜面
         try {
             BufferedReader reader = new BufferedReader(new FileReader(osuFile));
-            String line;
-            boolean startReading = false;
+            String line; //每一行
+            boolean startReading = false; //是否開始讀取譜面
             while((line = reader.readLine()) != null) {
+                //讀到[HitObjects]後開始讀取譜面
                 if(line.equals("[HitObjects]")) {
                     startReading = true;
                     continue;
                 }
+
+                //讀取譜面
                 if(startReading) {
                     String[] data = line.split(",");
-                    int x = Integer.parseInt(data[0]);
-                    int hitTime = Integer.parseInt(data[2]);
-                    String type = data[3];
+                    int x = Integer.parseInt(data[0]); //x座標
+                    int hitTime = Integer.parseInt(data[2]); //點擊時間
+                    String type = data[3]; //類型
 
-                    int track = (int) Math.floor((double) x * 4 / 512);
+                    int track = (int) Math.floor((double) x * 4 / 512); //軌道
+
+                    //根據類型加入音符
                     if(type.equals("1") || type.equals("5")) {
+                        //單擊音符
                         beatMap.getTrack(track).addNote(new Single(track, hitTime));
                     }else if(type.equals("128")) {
+                        //長按音符
                         int endTime = Integer.parseInt(data[5].split(":")[0]);
                         beatMap.getTrack(track).addNote(new Hold(track, hitTime, endTime));
                         beatMap.getTrack(track).addNote(new Hold(track, endTime));

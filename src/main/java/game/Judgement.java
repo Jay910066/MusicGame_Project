@@ -1,5 +1,8 @@
 package game;
 
+/**
+ * 評價等級及計分統計
+ */
 public class Judgement {
     public static int perfectPlus = 0;
     public static int perfect = 0;
@@ -15,6 +18,9 @@ public class Judgement {
     public static int maxCombo = 0;
     public static int score = 0;
 
+    /**
+     * 紀錄評價
+     */
     public static void judge(Judge judge) {
         switch(judge) {
             case PERFECT_PLUS:
@@ -77,13 +83,19 @@ public class Judgement {
                 combo = 0;
                 break;
         }
+        //計算準確度
         accuracy = (300 * (perfectPlus + perfect) + 200 * great + 100 * good + 50 * bad) / (double) (300 * (perfectPlus + perfect + great + good + bad + miss));
         GamePlay.updateComboText(judge);
+
+        //更新最大連擊
         if(combo > maxCombo) {
             maxCombo = combo;
         }
     }
 
+    /**
+     * 重置計分
+     */
     public static void reset() {
         perfectPlus = 0;
         perfect = 0;
@@ -100,6 +112,9 @@ public class Judgement {
         score = 0;
     }
 
+    /**
+     * 計算評價等級
+     */
     public static String ranking() {
         if(accuracy == 1) {
             return "X";
@@ -111,7 +126,7 @@ public class Judgement {
             return "B";
         }else if(accuracy >= 0.7) {
             return "C";
-        }else{
+        }else {
             return "D";
         }
     }
