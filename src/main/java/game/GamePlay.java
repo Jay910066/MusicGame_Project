@@ -18,6 +18,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
@@ -51,6 +52,7 @@ public class GamePlay extends Pane {
     private final List<ScaleTransition> noteScaleTransitions = new ArrayList<>(); //音符放大動畫
     private final ImageView[] trackPressedEffect = new ImageView[4]; //軌道按下特效
     private final ImageView[] hitEffect = new ImageView[4]; //擊中特效
+    private static ScaleTransition comboTextScaleTransition; //Combo放大動畫
     private final ScaleTransition[] hitEffectScaleTransition = new ScaleTransition[4]; //擊中特效放大動畫
     private final PauseTransition[] hideHitEffectPauseTransition = new PauseTransition[4]; //隱藏擊中特效的等待
     private final ImageView[] judgeEffect = new ImageView[5]; //評價特效
@@ -537,10 +539,13 @@ public class GamePlay extends Pane {
      */
     private void setComboText(){
         comboText = new Text();
+        comboText.setWrappingWidth(200);
+        comboText.setTextAlignment(TextAlignment.CENTER);
         comboText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
         comboText.setFill(Color.WHITE);
-        comboText.setX(centerX + 200);
+        comboText.setX(centerX + 150);
         comboText.setY(centerY - 250);
+        comboText.setEffect(new Glow(1));
         getChildren().add(comboText);
     }
     /**
@@ -704,6 +709,16 @@ public class GamePlay extends Pane {
             comboText.setText("");
         }else {
             comboText.setText(String.valueOf(Judgement.combo));
+
+            if(comboTextScaleTransition != null) {
+                comboTextScaleTransition.stop();
+            }
+            comboTextScaleTransition = new ScaleTransition(Duration.seconds(0.1), comboText);
+            comboTextScaleTransition.setFromX(0.7);
+            comboTextScaleTransition.setFromY(0.7);
+            comboTextScaleTransition.setToX(1);
+            comboTextScaleTransition.setToY(1);
+            comboTextScaleTransition.play();
         }
 
     }
