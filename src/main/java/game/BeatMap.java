@@ -9,7 +9,7 @@ public class BeatMap {
     private final ArrayList<Track> tracks;
 
     public BeatMap() {
-        tracks = new ArrayList<Track>(4);
+        tracks = new ArrayList<>(4);
         for(int i = 0; i < 4; i++) {
             tracks.add(new Track());
         }

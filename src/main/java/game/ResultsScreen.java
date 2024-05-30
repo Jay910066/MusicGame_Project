@@ -2,7 +2,6 @@ package game;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.Bloom;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,7 +12,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 
 /**

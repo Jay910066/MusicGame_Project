@@ -1,22 +1,24 @@
 package game;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
 /**
- * 譜面
+ * 音符軌道
  */
 public class Track {
-    private final ArrayList<Note> notes;
+    private final Queue<Note> notes;
 
     public Track() {
-        notes = new ArrayList<>();
+        notes = new ArrayDeque<>();
     }
 
     /**
      * 取得音符
      * @return 音符
      */
-    public ArrayList<Note> getNotes() {
+    public Queue<Note> getNotes() {
         return notes;
     }
 
@@ -32,6 +34,6 @@ public class Track {
      * 移除最前面的音符
      */
     public void removeFrontNote() {
-        notes.remove(0);
+        notes.remove();
     }
 }

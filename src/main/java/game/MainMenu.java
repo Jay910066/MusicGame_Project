@@ -1,22 +1,14 @@
 package game;
 
-import javafx.beans.binding.SetBinding;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * 主畫面
@@ -46,7 +38,7 @@ public class MainMenu extends StackPane {
     private void setBackGround() {
         ImageView background = new ImageView("file:Resources/Images/menu_background.jpg"); //背景圖片
 
-        //設定背景大小
+        //設定背景大小，使其符合螢幕大小
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double maxDimension = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         background.setPreserveRatio(true);

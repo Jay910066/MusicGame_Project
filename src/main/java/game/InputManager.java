@@ -4,15 +4,24 @@ import javafx.scene.input.KeyCode;
 
 import java.util.*;
 
+/**
+ * 輸入管理器
+ * 處理玩家輸入
+ */
 public class InputManager {
-    private GamePlay gamePlay;
-    private SoundEffect[] soundEffects = new SoundEffect[4];
-    private Set<KeyCode> currentlyPressedKeys = new HashSet<>();
-    private Map<KeyCode, Integer> keyPressTimes = new HashMap<>();
-    private Map<KeyCode, Integer> deltaTime = new HashMap<>();
-    private Map<KeyCode, Integer> keyReleaseTimes = new HashMap<>();
+    private final GamePlay gamePlay; //遊戲畫面
+    private final SoundEffect[] soundEffects = new SoundEffect[4]; //音效
+    private final Set<KeyCode> currentlyPressedKeys = new HashSet<>(); //目前按下的按鍵
+    private final Map<KeyCode, Integer> keyPressTimes = new HashMap<>(); //按下按鍵的時間
+    private final Map<KeyCode, Integer> deltaTime = new HashMap<>(); //按下按鍵與擊中音符的時間差
+    private final Map<KeyCode, Integer> keyReleaseTimes = new HashMap<>(); //放開按鍵的時間
 
+    /**
+     * 建構子
+     * @param gamePlay 遊戲畫面
+     */
     public InputManager(GamePlay gamePlay) {
+        //初始化
         this.gamePlay = gamePlay;
         for(int i = 0; i < 4; i++) {
             soundEffects[i] = new SoundEffect();
@@ -24,38 +33,62 @@ public class InputManager {
         }
     }
 
+    /**
+     * 處理按下按鍵
+     * @param keyCode 按鍵
+     * @return 評價等級
+     */
     public Judge handleKeyPress(KeyCode keyCode) {
+        //如果按鍵已經按下，則不處理
         if(currentlyPressedKeys.contains(keyCode)) {
             return Judge.NONE;
         }
         currentlyPressedKeys.add(keyCode);
 
+        //取得軌道索引
         int trackIndex = getTrackIndex(keyCode);
+
+        //如果軌道索引在範圍內
         if(trackIndex != -1) {
+            //更新按下按鍵的時間
             keyPressTimes.put(keyCode, (int) ((System.nanoTime() - gamePlay.getStartTime()) / 1_000_000));
-            List<Note> notes = gamePlay.getBornNotes().get(trackIndex).getNotes();
+
+            //取得軌道的音符
+            Queue<Note> notes = gamePlay.getRenderedNotes().get(trackIndex).getNotes();
+
+            //如果音符不為空
             if(!notes.isEmpty()) {
-                Note note = gamePlay.getBornNotes().get(trackIndex).getNotes().get(0);
+                //取得音符
+                Note note = gamePlay.getRenderedNotes().get(trackIndex).getNotes().peek();
+                //檢查是否擊中音符
                 Judge judge = note.OnHitCheck(keyPressTimes.get(keyCode));
+
+                //如果是單點音符
                 if(note instanceof Single singleNote) {
+                    //如果擊中音符
                     if(judge != Judge.NONE) {
                         Judgement.judge(judge);
                         deltaTime.put(keyCode, singleNote.getHitTime() - keyPressTimes.get(keyCode));
                         gamePlay.getChildren().remove(singleNote);
-                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
-                        soundEffects[trackIndex].playHitSound();
-                        return judge;
-                    }
-                }else if(note instanceof Hold holdNote) {
-                    if(judge != Judge.NONE && holdNote.isStartNote()) {
-                        Judgement.judge(judge);
-                        deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
-                        gamePlay.getChildren().remove(holdNote);
-                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        gamePlay.getRenderedNotes().get(trackIndex).removeFrontNote();
                         soundEffects[trackIndex].playHitSound();
                         return judge;
                     }
                 }
+                //如果是長按音符
+                else if(note instanceof Hold holdNote) {
+                    //如果擊中音符且是開始音符
+                    if(judge != Judge.NONE && holdNote.isStartNote()) {
+                        Judgement.judge(judge);
+                        deltaTime.put(keyCode, holdNote.getHitTime() - keyPressTimes.get(keyCode));
+                        gamePlay.getChildren().remove(holdNote);
+                        gamePlay.getRenderedNotes().get(trackIndex).removeFrontNote();
+                        soundEffects[trackIndex].playHitSound();
+                        return judge;
+                    }
+                }
+
+                //如果空打，播放空打音效
                 if(judge == Judge.NONE) {
                     soundEffects[trackIndex].playTapSound();
                 }
@@ -65,31 +98,57 @@ public class InputManager {
         return Judge.NONE;
     }
 
+    /**
+     * 處理放開按鍵
+     * @param keyCode 按鍵
+     * @return 評價等級
+     */
     public Judge handleKeyRelease(KeyCode keyCode) {
+        //將按鍵從目前按下的按鍵中移除
         currentlyPressedKeys.remove(keyCode);
+
+        //取得軌道索引
         int trackIndex = getTrackIndex(keyCode);
+
+        //如果軌道索引在範圍內
         if(trackIndex != -1) {
+            //更新放開按鍵的時間
             keyReleaseTimes.put(keyCode, (int) ((System.nanoTime() - gamePlay.getStartTime()) / 1_000_000));
-            List<Note> notes = gamePlay.getBornNotes().get(trackIndex).getNotes();
+            //取得已渲染軌道的音符
+            Queue<Note> notes = gamePlay.getRenderedNotes().get(trackIndex).getNotes();
+
+            //如果已渲染音符不為空
             if(!notes.isEmpty()) {
-                Note note = gamePlay.getBornNotes().get(trackIndex).getNotes().get(0);
+                //取得最前面的音符
+                Note note = gamePlay.getRenderedNotes().get(trackIndex).getNotes().peek();
+                //檢查是否擊中音符
                 Judge judge = note.OnHitCheck(keyReleaseTimes.get(keyCode));
+
+                //如果是長按音符，且是結束音符
                 if(note instanceof Hold holdNote && holdNote.isEndNote()) {
+                    //如果擊中音符
                     if(judge != Judge.NONE) {
                         Judgement.judge(judge);
                         deltaTime.put(keyCode, holdNote.getHitTime() - keyReleaseTimes.get(keyCode));
                         gamePlay.getChildren().remove(holdNote);
-                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        gamePlay.getRenderedNotes().get(trackIndex).removeFrontNote();
                         return judge;
-                    }else {
+                    }
+                    //如果結束音符還未進入擊中範圍，則視為MISS
+                    else {
                         holdNote.miss();
                         gamePlay.getChildren().remove(holdNote);
-                        gamePlay.getBornNotes().get(trackIndex).removeFrontNote();
+                        gamePlay.getRenderedNotes().get(trackIndex).removeFrontNote();
                         return Judge.MISS;
                     }
                 }
-            }else if(!gamePlay.getBeatMap().getTrack(trackIndex).getNotes().isEmpty()) {
-                Note note = gamePlay.getBeatMap().getTrack(trackIndex).getNotes().get(0);
+            }
+            //如果已渲染音符為空，則刪除譜面中該軌道最前面的音符，視為MISS
+            else if(!gamePlay.getBeatMap().getTrack(trackIndex).getNotes().isEmpty()) {
+                //取得該軌道中最前面的音符
+                Note note = gamePlay.getBeatMap().getTrack(trackIndex).getNotes().peek();
+
+                //如果是長按音符，且是結束音符
                 if(note instanceof Hold holdNote && holdNote.isEndNote()) {
                     holdNote.miss();
                     gamePlay.getBeatMap().getTrack(trackIndex).removeFrontNote();
@@ -100,6 +159,11 @@ public class InputManager {
         return Judge.NONE;
     }
 
+    /**
+     * 取得軌道索引
+     * @param keyCode 按鍵
+     * @return 軌道索引
+     */
     private int getTrackIndex(KeyCode keyCode) {
         switch(keyCode) {
             case D:
@@ -115,14 +179,29 @@ public class InputManager {
         }
     }
 
+    /**
+     * 取得按下按鍵的時間
+     * @param keyCode 按鍵
+     * @return 按下按鍵的時間
+     */
     public int getKeyPressTime(KeyCode keyCode) {
         return keyPressTimes.getOrDefault(keyCode, 0);
     }
 
+    /**
+     * 取得按下按鍵與擊中音符的時間差
+     * @param keyCode 按鍵
+     * @return 時間差
+     */
     public int getDeltaTime(KeyCode keyCode) {
         return deltaTime.getOrDefault(keyCode, 0);
     }
 
+    /**
+     * 取得放開按鍵的時間
+     * @param keyCode 按鍵
+     * @return 放開按鍵的時間
+     */
     public int getKeyReleaseTime(KeyCode keyCode) {
         return keyReleaseTimes.getOrDefault(keyCode, 0);
     }

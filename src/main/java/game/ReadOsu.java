@@ -17,6 +17,8 @@ public class ReadOsu {
     private String Creator; //譜面作者
     private String keyCount; //鍵數
 
+    ReadOsu() {}
+
     ReadOsu(String path) {
         setSong(path);
     }

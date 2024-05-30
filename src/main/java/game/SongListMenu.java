@@ -100,7 +100,7 @@ public class SongListMenu extends StackPane {
         songList = songFolder.listFiles();
         totalItems = songList.length;
         songBoxes = new HBox[totalItems];
-        readOsu = new ReadOsu(songList[0].getPath() + "/Info.osu");
+        readOsu = new ReadOsu();
 
         for(int i = 0; i < totalItems; i++) {
             readOsu.setSong(songList[i].getPath() + "/Info.osu");
@@ -124,10 +124,12 @@ public class SongListMenu extends StackPane {
         background = new ImageView();
         getChildren().add(background);
 
+        //調整背景亮度
         ColorAdjust brightness = new ColorAdjust();
         brightness.setBrightness(-0.1);
         background.setEffect(brightness);
 
+        //設定背景大小，使背景填滿螢幕
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double maxDimension = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         background.setPreserveRatio(true);
@@ -136,6 +138,7 @@ public class SongListMenu extends StackPane {
         else
             background.setFitWidth(maxDimension * 1);
 
+        //設定背景圖片，如果有background.jpg則使用background.jpg，否則使用cover.jpg
         if(new File(songList[selectedIndex].getPath() + "/background.jpg").exists()) {
             background.setImage(new Image("file:" + songList[selectedIndex].getPath() + "/background.jpg"));
         }else {
