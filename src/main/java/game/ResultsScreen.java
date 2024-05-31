@@ -104,6 +104,15 @@ public class ResultsScreen extends Pane {
         scoreText.setLayoutY(217);
         getChildren().add(scoreText);
 
+        //高分
+        Text HighScoreText = new Text(String.valueOf(Judgement.highScore));
+        HighScoreText.setStyle("-fx-font-size: 40;-fx-font-weight: bold;");
+        HighScoreText.setFill(Color.WHITE);
+        HighScoreText.setEffect(new Glow(1));
+        HighScoreText.setLayoutX(260);
+        HighScoreText.setLayoutY(260);
+        getChildren().add(HighScoreText);
+
         //評價面板
         GridPane judgementGrid = new GridPane();
         judgementGrid.setLayoutX(325);
