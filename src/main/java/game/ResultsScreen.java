@@ -23,6 +23,9 @@ import java.io.File;
  * 結果畫面
  */
 public class ResultsScreen extends Pane {
+    private Media BackgroundMusic = new Media(new File("Resources/Audio/bgm.mp3").toURI().toString());
+    private MediaPlayer BackgroundMusicPlayer = new MediaPlayer(BackgroundMusic);
+
     public ResultsScreen(ScreenManager screenManager, ImageView background, ReadOsu readOsu) {
         //設定畫面
         this.setFocusTraversable(true);
@@ -40,6 +43,7 @@ public class ResultsScreen extends Pane {
         this.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.ESCAPE) {
                 screenManager.switchToSongListMenu();
+                BackgroundMusicPlayer.stop();
             }
         });
     }
@@ -214,12 +218,11 @@ public class ResultsScreen extends Pane {
 
         quitButton.setOnMouseClicked(e -> {
             screenManager.switchToSongListMenu();
+            BackgroundMusicPlayer.stop();
         });
     }
 
     private void setBackGroundMusic(){
-        Media BackgroundMusic = new Media(new File("Resources/Audio/bgm.mp3").toURI().toString());
-        MediaPlayer BackgroundMusicPlayer = new MediaPlayer(BackgroundMusic);
         BackgroundMusicPlayer.seek(Duration.ZERO);
         BackgroundMusicPlayer.setVolume(3);
         BackgroundMusicPlayer.play();

@@ -86,6 +86,7 @@ public class Judgement {
         //計算準確度
         accuracy = (300 * (perfectPlus + perfect) + 200 * great + 100 * good + 50 * bad) / (double) (300 * (perfectPlus + perfect + great + good + bad + miss));
         GamePlay.updateComboText(judge);
+        GamePlay.updateScoreText();
 
         //更新最大連擊
         if(combo > maxCombo) {

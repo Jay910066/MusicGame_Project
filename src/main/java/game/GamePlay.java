@@ -48,6 +48,7 @@ public class GamePlay extends Pane {
     private boolean isPaused = false; //遊戲是否暫停
     private AnimationTimer gameLoop; //遊戲迴圈
     private static Text comboText; //Combo顯示
+    private static Text ScoreText;
     private final List<PathTransition> notePathTransitions = new ArrayList<>(); //音符掉落動畫
     private final List<ScaleTransition> noteScaleTransitions = new ArrayList<>(); //音符放大動畫
     private final ImageView[] trackPressedEffect = new ImageView[4]; //軌道按下特效
@@ -89,6 +90,7 @@ public class GamePlay extends Pane {
         setTrackPressedEffect();
         setHitEffect();
         setComboText();
+        setScoreText();
         setJudgeEffect();
         setLeaveWindow();
 
@@ -549,6 +551,19 @@ public class GamePlay extends Pane {
         getChildren().add(comboText);
     }
     /**
+     * 設置Score顯示
+     */
+    private void setScoreText(){
+        ScoreText = new Text();
+        ScoreText.setWrappingWidth(200);
+        ScoreText.setTextAlignment(TextAlignment.CENTER);
+        ScoreText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
+        ScoreText.setFill(Color.WHITE);
+        ScoreText.setX(centerX - 650);
+        ScoreText.setY(centerY - 400);
+        getChildren().add(ScoreText);
+    }
+    /**
      * 設置評價特效
      */
     private void setJudgeEffect(){
@@ -725,6 +740,13 @@ public class GamePlay extends Pane {
 
     }
 
+    /**
+     * 更新分數數字
+     *
+     */
+    public static void updateScoreText() {
+        ScoreText.setText(String.valueOf(Judgement.score));
+    }
     /**
      * 設定打擊特效
      */
