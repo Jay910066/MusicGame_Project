@@ -13,6 +13,8 @@ public class SoundEffect {
     private final MediaPlayer selectSoundPlayer;
     private final MediaPlayer tapSoundPlayer; //點擊音效
     private final MediaPlayer hitSoundPlayer; //擊中音效
+    private final MediaPlayer confirmSoundPlayer;
+    private final MediaPlayer selectsongSoundPlayer;
 
     SoundEffect() {
         //載入音效
@@ -24,6 +26,12 @@ public class SoundEffect {
 
         Media selectSound = new Media(new File("Resources/Audio/SelectButton.mp3").toURI().toString());
         selectSoundPlayer = new MediaPlayer(selectSound);
+
+        Media confirmSound = new Media(new File("Resources/Audio/confirm.wav").toURI().toString());
+        confirmSoundPlayer = new MediaPlayer(confirmSound);
+
+        Media selectsongSound = new Media(new File("Resources/Audio/SelectSong.wav").toURI().toString());
+        selectsongSoundPlayer = new MediaPlayer(selectsongSound);
     }
 
     /**
@@ -48,5 +56,17 @@ public class SoundEffect {
         selectSoundPlayer.seek(Duration.ZERO);
         selectSoundPlayer.setVolume(Settings.effectVolume);
         selectSoundPlayer.play();
+    }
+
+    public void playComfirmSound() {
+        confirmSoundPlayer.seek(Duration.ZERO);
+        confirmSoundPlayer.setVolume(Settings.effectVolume);
+        confirmSoundPlayer.play();
+    }
+
+    public void playSelectSongSound() {
+        selectsongSoundPlayer.seek(Duration.ZERO);
+        selectsongSoundPlayer.setVolume(Settings.effectVolume);
+        selectsongSoundPlayer.play();
     }
 }

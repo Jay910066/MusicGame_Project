@@ -81,6 +81,8 @@ public class SongListMenu extends StackPane {
             //按下Enter鍵，如果是4K鍵盤模式，則切換到遊戲畫面
             else if(e.getCode() == KeyCode.ENTER) {
                 if(readOsu.is4K_Mania()) {
+                    SoundEffect confirmSound = new SoundEffect();
+                    confirmSound.playComfirmSound();
                     screenManager.switchToGamePlay(songList[selectedIndex]);
                     previewSongPlayer.stop();
                 }
@@ -162,9 +164,12 @@ public class SongListMenu extends StackPane {
         selector.setSpacing(50);
 
         selector.setOnKeyPressed(event -> {
+            SoundEffect selectsongsound = new SoundEffect();
             if(event.getCode() == KeyCode.UP) {
+                selectsongsound.playSelectSongSound();
                 moveUp();
             }else if(event.getCode() == KeyCode.DOWN) {
+                selectsongsound.playSelectSongSound();
                 moveDown();
             }
         });

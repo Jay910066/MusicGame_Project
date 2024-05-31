@@ -10,9 +10,14 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import javafx.util.Duration;
+
+import java.io.File;
 
 /**
  * 結果畫面
@@ -29,6 +34,7 @@ public class ResultsScreen extends Pane {
         setSongInfoText(readOsu);
         setRankImage();
         setQuitButton(screenManager);
+        setBackGroundMusic();
 
         //按下ESC返回歌曲列表
         this.setOnKeyPressed(e -> {
@@ -209,5 +215,13 @@ public class ResultsScreen extends Pane {
         quitButton.setOnMouseClicked(e -> {
             screenManager.switchToSongListMenu();
         });
+    }
+
+    private void setBackGroundMusic(){
+        Media BackgroundMusic = new Media(new File("Resources/Audio/bgm.mp3").toURI().toString());
+        MediaPlayer BackgroundMusicPlayer = new MediaPlayer(BackgroundMusic);
+        BackgroundMusicPlayer.seek(Duration.ZERO);
+        BackgroundMusicPlayer.setVolume(3);
+        BackgroundMusicPlayer.play();
     }
 }
