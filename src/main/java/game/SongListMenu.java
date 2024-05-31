@@ -232,10 +232,11 @@ public class SongListMenu extends StackPane {
         detailBox.getChildren().add(buttonBox);
         buttonBox.setPadding(new Insets(10));
         buttonBox.setSpacing(10);
+        SoundEffect selectsoundEffect = new SoundEffect();
 
         //退出選歌頁面按鈕
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
-        quitButton.setOnMouseEntered(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png")));
+        quitButton.setOnMouseEntered(e -> {quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png"));selectsoundEffect.playSelectSound();});
         quitButton.setOnMouseExited(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton.png")));
         quitButton.setOnMouseClicked(e -> {
             screenManager.switchToMainMenu();
@@ -245,7 +246,7 @@ public class SongListMenu extends StackPane {
 
         //進入設定頁面按鈕
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
-        settingsButton.setOnMouseEntered(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton_Selected.png")));
+        settingsButton.setOnMouseEntered(e -> {settingsButton.setImage(new Image("file:Resources/Images/SettingsButton_Selected.png"));selectsoundEffect.playSelectSound();});
         settingsButton.setOnMouseExited(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton.png")));
         settingsButton.setOnMouseClicked(e -> {
             screenManager.switchToSettings("SongListMenu");

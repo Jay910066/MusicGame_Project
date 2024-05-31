@@ -155,9 +155,9 @@ public class Settings extends VBox {
         settings.add(effectVolumeText, 2, 3);
         settings.add(effectVolumeButton, 3, 3);
 
-
+        SoundEffect selectsoundEffect = new SoundEffect();
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
-        quitButton.setOnMouseEntered(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage()));
+        quitButton.setOnMouseEntered(e -> {quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage());selectsoundEffect.playSelectSound();});
         quitButton.setOnMouseExited(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton.png").getImage()));
         quitButton.setOnMouseClicked(e -> goBack());
 

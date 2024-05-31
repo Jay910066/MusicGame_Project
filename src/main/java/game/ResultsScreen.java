@@ -198,10 +198,11 @@ public class ResultsScreen extends Pane {
      * @param screenManager 畫面管理器
      */
     private void setQuitButton(ScreenManager screenManager) {
+        SoundEffect selectsoundEffect = new SoundEffect();
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
         quitButton.setTranslateX(0);
         quitButton.setTranslateY(980);
-        quitButton.setOnMouseEntered(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png")));
+        quitButton.setOnMouseEntered(e -> {quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png"));selectsoundEffect.playSelectSound();});
         quitButton.setOnMouseExited(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton.png")));
         getChildren().add(quitButton);
 

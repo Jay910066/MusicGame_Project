@@ -10,6 +10,7 @@ import java.io.File;
  * 音效控制
  */
 public class SoundEffect {
+    private final MediaPlayer selectSoundPlayer;
     private final MediaPlayer tapSoundPlayer; //點擊音效
     private final MediaPlayer hitSoundPlayer; //擊中音效
 
@@ -20,6 +21,9 @@ public class SoundEffect {
 
         Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
         hitSoundPlayer = new MediaPlayer(hitSound);
+
+        Media selectSound = new Media(new File("Resources/Audio/SelectButton.mp3").toURI().toString());
+        selectSoundPlayer = new MediaPlayer(selectSound);
     }
 
     /**
@@ -38,5 +42,11 @@ public class SoundEffect {
         hitSoundPlayer.seek(Duration.ZERO);
         hitSoundPlayer.setVolume(Settings.effectVolume);
         hitSoundPlayer.play();
+    }
+
+    public void playSelectSound() {
+        selectSoundPlayer.seek(Duration.ZERO);
+        selectSoundPlayer.setVolume(Settings.effectVolume);
+        selectSoundPlayer.play();
     }
 }

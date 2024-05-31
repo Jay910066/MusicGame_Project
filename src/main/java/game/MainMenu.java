@@ -56,22 +56,23 @@ public class MainMenu extends StackPane {
      * @param screenManager 畫面管理器
      */
     private void setButtons(ScreenManager screenManager) {
+        SoundEffect selectsoundEffect = new SoundEffect();
 
         //進入選歌畫面按鈕
         ImageView playButton = new ImageView("file:Resources/Images/PlayButton.png");
-        playButton.setOnMouseEntered(e -> playButton.setImage(new Image("file:Resources/Images/PlayButton_Selected.png")));
+        playButton.setOnMouseEntered(e -> {playButton.setImage(new Image("file:Resources/Images/PlayButton_Selected.png"));selectsoundEffect.playSelectSound();});
         playButton.setOnMouseExited(e -> playButton.setImage(new Image("file:Resources/Images/PlayButton.png")));
         playButton.setOnMouseClicked(e -> screenManager.switchToSongListMenu());
 
         //進入設定畫面按鈕
         ImageView settingsButton = new ImageView("file:Resources/Images/SettingsButton.png");
-        settingsButton.setOnMouseEntered(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton_Selected.png")));
+        settingsButton.setOnMouseEntered(e -> {settingsButton.setImage(new Image("file:Resources/Images/SettingsButton_Selected.png"));selectsoundEffect.playSelectSound();});
         settingsButton.setOnMouseExited(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton.png")));
         settingsButton.setOnMouseClicked(e -> screenManager.switchToSettings("MainMenu"));
 
         //離開遊戲按鈕
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
-        quitButton.setOnMouseEntered(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png")));
+        quitButton.setOnMouseEntered(e -> {quitButton.setImage(new Image("file:Resources/Images/QuitButton_Selected.png"));selectsoundEffect.playSelectSound();});
         quitButton.setOnMouseExited(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton.png")));
         quitButton.setOnMouseClicked(e -> System.exit(0));
 
