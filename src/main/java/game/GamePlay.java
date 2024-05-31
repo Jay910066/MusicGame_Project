@@ -847,6 +847,13 @@ public class GamePlay extends Pane {
     }
 
     /**
+     * 取得是否處於長按狀態
+     */
+    public boolean[] getIsHolding() {
+        return isHolding;
+    }
+
+    /**
      * 取得開始時間
      *
      * @return 開始時間

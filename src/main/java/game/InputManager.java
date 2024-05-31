@@ -151,6 +151,7 @@ public class InputManager {
                 //如果是長按音符，且是結束音符
                 if(note instanceof Hold holdNote && holdNote.isEndNote()) {
                     holdNote.miss();
+                    gamePlay.getIsHolding()[trackIndex] = false;
                     gamePlay.getBeatMap().getTrack(trackIndex).removeFrontNote();
                     return Judge.MISS;
                 }
