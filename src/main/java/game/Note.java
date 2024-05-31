@@ -31,7 +31,7 @@ public abstract class Note extends ImageView {
      * 計算擊中時間與抵達時間的誤差
      */
     public Judge OnHitCheck(int pressTime) {
-        int deltaTime = pressTime - hitTime;
+        int deltaTime = pressTime - hitTime - Settings.offset;
         if(deltaTime <= RhythmGame.acceptableRange) {
             if(deltaTime > 100) {
                 return Judge.Fast_BAD;
