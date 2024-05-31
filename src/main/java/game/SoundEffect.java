@@ -27,6 +27,7 @@ public class SoundEffect {
      */
     public void playTapSound() {
         tapSoundPlayer.seek(Duration.ZERO);
+        tapSoundPlayer.setVolume(Settings.effectVolume);
         tapSoundPlayer.play();
     }
 
@@ -35,6 +36,7 @@ public class SoundEffect {
      */
     public void playHitSound() {
         hitSoundPlayer.seek(Duration.ZERO);
+        hitSoundPlayer.setVolume(Settings.effectVolume);
         hitSoundPlayer.play();
     }
 }

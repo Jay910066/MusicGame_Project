@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,10 +28,12 @@ public class Settings extends VBox {
     public static double flowSpeed;
     public static double volume;
     public static int offset;
+    public static double effectVolume;
     private String previousScreen;
     private File[] songList;
     private Media backgroundSong;
     public MediaPlayer backgroundSongPlayer;
+    private MediaPlayer SoundEffectPlayer;
 
     /**
      * 設定畫面
@@ -114,10 +117,34 @@ public class Settings extends VBox {
             }
         });
 
-        
         settings.add(volumeLabel, 0, 2);
         settings.add(volumeSlider, 1, 2);
         settings.add(volumeText, 2, 2);
+
+        Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
+        SoundEffectPlayer = new MediaPlayer(hitSound);
+        Label effectVolumeLabel = new Label("EffectVolume:");
+        Slider effectVolumeSlider = new Slider();
+        effectVolumeSlider.setPrefWidth(200);
+        effectVolumeSlider.setValue(50);
+        Text effectVolumeText = new Text(String.valueOf(effectVolume));
+        SoundEffectPlayer.volumeProperty().bind(effectVolumeSlider.valueProperty().divide(100));
+        effectVolumeSlider.valueProperty().addListener(ov -> {
+            effectVolume = effectVolumeSlider.getValue();
+            SoundEffectPlayer.play();
+            SoundEffectPlayer.stop();
+            effectVolumeText.setText(String.valueOf(Math.round(effectVolume)));
+            try {
+                setConfig("EffectVolume",effectVolume);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        settings.add(effectVolumeLabel, 0, 3);
+        settings.add(effectVolumeSlider, 1, 3);
+        settings.add(effectVolumeText, 2, 3);
+
 
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
         quitButton.setOnMouseEntered(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage()));
