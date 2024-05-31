@@ -51,6 +51,7 @@ public class Settings extends VBox {
             flowSpeed = getConfig("FlowSpeed", Double.class);
             volume = getConfig("Volume", Double.class);
             offset = getConfig("Offset", Integer.class);
+            effectVolume = getConfig("EffectVolume", Double.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,8 +107,8 @@ public class Settings extends VBox {
         Label volumeLabel = new Label("Volume:");
         Slider volumeSlider = new Slider();
         volumeSlider.setPrefWidth(200);
-        volumeSlider.setValue(50);
-        Text volumeText = new Text(String.valueOf(volume));
+        volumeSlider.setValue(volume);
+        Text volumeText = new Text(String.valueOf(Math.round(volume)));
         backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().divide(100));
         volumeSlider.valueProperty().addListener(ov -> {
             volume = volumeSlider.getValue();
@@ -128,8 +129,8 @@ public class Settings extends VBox {
         Label effectVolumeLabel = new Label("EffectVolume:");
         Slider effectVolumeSlider = new Slider();
         effectVolumeSlider.setPrefWidth(200);
-        effectVolumeSlider.setValue(50);
-        Text effectVolumeText = new Text(String.valueOf(effectVolume));
+        effectVolumeSlider.setValue(effectVolume);
+        Text effectVolumeText = new Text((String.valueOf(Math.round(effectVolume))));
         Button effectVolumeButton = new Button("Play");
         SoundEffectPlayer.volumeProperty().bind(effectVolumeSlider.valueProperty().divide(100));
         effectVolumeSlider.valueProperty().addListener(ov -> {
