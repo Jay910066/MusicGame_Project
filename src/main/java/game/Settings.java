@@ -3,6 +3,8 @@ package game;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,13 +27,13 @@ import java.io.IOException;
  */
 public class Settings extends VBox {
     private ScreenManager screenManager;
-    public static double flowSpeed;
-    public static double volume;
+    public static double flowSpeed;//音符下落速度
+    public static double volume;//歌曲音效
+    public static double effectVolume;//音效音量
     public static int offset;
-    public static double effectVolume;
-    private String previousScreen;
-    private File[] songList;
-    private Media backgroundSong;
+    private String previousScreen;//前一個螢幕
+    private File[] songList;//讀取歌用
+    private Media backgroundSong;//播放背景歌曲
     public MediaPlayer backgroundSongPlayer;
     private MediaPlayer SoundEffectPlayer;
 
@@ -128,11 +130,10 @@ public class Settings extends VBox {
         effectVolumeSlider.setPrefWidth(200);
         effectVolumeSlider.setValue(50);
         Text effectVolumeText = new Text(String.valueOf(effectVolume));
+        Button effectVolumeButton = new Button("Play");
         SoundEffectPlayer.volumeProperty().bind(effectVolumeSlider.valueProperty().divide(100));
         effectVolumeSlider.valueProperty().addListener(ov -> {
             effectVolume = effectVolumeSlider.getValue();
-            SoundEffectPlayer.play();
-            SoundEffectPlayer.stop();
             effectVolumeText.setText(String.valueOf(Math.round(effectVolume)));
             try {
                 setConfig("EffectVolume",effectVolume);
@@ -140,10 +141,18 @@ public class Settings extends VBox {
                 throw new RuntimeException(e);
             }
         });
+        effectVolumeButton.setOnAction(new EventHandler<ActionEvent>() {//播音效
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                SoundEffectPlayer.play();
+                SoundEffectPlayer.stop();
+            }
+        });
 
         settings.add(effectVolumeLabel, 0, 3);
         settings.add(effectVolumeSlider, 1, 3);
         settings.add(effectVolumeText, 2, 3);
+        settings.add(effectVolumeButton, 3, 3);
 
 
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
