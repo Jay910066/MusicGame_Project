@@ -17,7 +17,6 @@ public class Judgement {
     public static int combo = 0;
     public static int maxCombo = 0;
     public static int score = 0;
-    public static int highScore=0;
 
     /**
      * 紀錄評價
@@ -93,10 +92,6 @@ public class Judgement {
         if(combo > maxCombo) {
             maxCombo = combo;
         }
-
-        if (score > highScore) {
-            highScore = score;
-        }
     }
 
     /**
@@ -116,7 +111,6 @@ public class Judgement {
         maxCombo = 0;
         accuracy = 0;
         score = 0;
-        highScore = 0;
     }
 
     /**

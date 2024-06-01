@@ -18,6 +18,8 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * 結果畫面
@@ -25,6 +27,7 @@ import java.io.File;
 public class ResultsScreen extends Pane {
     private Media BackgroundMusic = new Media(new File("Resources/Audio/bgm.mp3").toURI().toString());
     private MediaPlayer BackgroundMusicPlayer = new MediaPlayer(BackgroundMusic);
+    private File[] songList; //歌曲列表
 
     public ResultsScreen(ScreenManager screenManager, ImageView background, ReadOsu readOsu) {
         //設定畫面
@@ -104,14 +107,8 @@ public class ResultsScreen extends Pane {
         scoreText.setLayoutY(217);
         getChildren().add(scoreText);
 
-        //高分
-        Text HighScoreText = new Text(String.valueOf(Judgement.highScore));
-        HighScoreText.setStyle("-fx-font-size: 40;-fx-font-weight: bold;");
-        HighScoreText.setFill(Color.WHITE);
-        HighScoreText.setEffect(new Glow(1));
-        HighScoreText.setLayoutX(260);
-        HighScoreText.setLayoutY(260);
-        getChildren().add(HighScoreText);
+        //更新高分
+        UpdateHighScore();
 
         //評價面板
         GridPane judgementGrid = new GridPane();
@@ -209,6 +206,24 @@ public class ResultsScreen extends Pane {
                 break;
         }
         getChildren().add(rankImage);
+    }
+
+    /**
+     * 更新高分
+     */
+    private  void UpdateHighScore(){
+        if (Judgement.score > SongListMenu.highScores[SongListMenu.selectedIndex]) {
+            try{
+                SongListMenu.highScores[SongListMenu.selectedIndex] = Judgement.score;
+                File songFolder = new File("Resources/Songs");
+                songList = songFolder.listFiles();
+                File file = new File(songList[SongListMenu.selectedIndex].getPath() +"/highScore.txt");
+                RandomAccessFile raf = new RandomAccessFile(file, "rw");
+                raf.seek(0);
+                raf.writeInt(Judgement.score);
+            }catch(IOException e){
+            }
+        }
     }
 
     /**

@@ -18,12 +18,17 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 歌曲列表畫面
  */
 public class SongListMenu extends StackPane {
     public static int selectedIndex = 0; //選擇的歌曲索引
+    public static int[] highScores =new int[9];//高分
 
     private BorderPane root; //根節點
     private VBox selector; //選擇器
@@ -36,8 +41,10 @@ public class SongListMenu extends StackPane {
     private Text songNameText; //歌曲名稱
     private Text artistText; //歌曲演出者
     private Text creatorText; //圖譜作者
+    private Text highScoreText;
     private Media selectedSong; //選擇的歌曲
     private MediaPlayer previewSongPlayer; //預覽歌曲播放器
+
 
     /**
      * 歌曲列表畫面
@@ -116,6 +123,24 @@ public class SongListMenu extends StackPane {
             songBox.setPadding(new Insets(10));
             songBox.getChildren().add(songNameLabel);
             songBoxes[i] = songBox;
+        }
+    }
+
+    /**
+     * 讀highScore
+     * 若無則寫
+     */
+    public int ReadHighScore(int selectedSongIndex){
+        try{
+            File songFolder = new File("Resources/Songs");
+            songList = songFolder.listFiles();
+            File file = new File(songList[selectedSongIndex].getPath() +"/highScore.txt");
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            int TMP = raf.readInt();
+            return TMP;
+        }catch (IOException e){
+            highScores[selectedSongIndex] = 0;
+            return 0;
         }
     }
 
@@ -232,6 +257,16 @@ public class SongListMenu extends StackPane {
         creatorText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
         creatorText.setFill(Color.WHITE);
 
+        //高分
+        Label highScoreLabel = new Label("HighScore:");
+        songInfo.add(highScoreLabel, 0, 3);
+        highScoreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: white");
+        highScores[selectedIndex] = ReadHighScore(selectedIndex);
+        highScoreText = new Text(String.valueOf(highScores[selectedIndex]));
+        songInfo.add(highScoreText, 1, 3);
+        highScoreText.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
+        highScoreText.setFill(Color.WHITE);
+
         //按鈕區域
         HBox buttonBox = new HBox();
         detailBox.getChildren().add(buttonBox);
@@ -296,6 +331,8 @@ public class SongListMenu extends StackPane {
         songNameText.setText(readOsu.getTitle());
         artistText.setText(readOsu.getArtist());
         creatorText.setText(readOsu.getCreator());
+        highScores[index] = ReadHighScore(index);
+        highScoreText.setText(String.valueOf(highScores[index]));
 
         //播放預覽歌曲
         previewSongPlayer.stop();
