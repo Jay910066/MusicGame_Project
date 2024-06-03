@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class SongListMenu extends StackPane {
     public static int selectedIndex = 0; //選擇的歌曲索引
-    public static int[] highScores =new int[9];//高分
+    public static int[] highScores;//高分
 
     private BorderPane root; //根節點
     private VBox selector; //選擇器
@@ -109,6 +109,7 @@ public class SongListMenu extends StackPane {
         songList = songFolder.listFiles();
         totalItems = songList.length;
         songBoxes = new HBox[totalItems];
+        highScores = new int[totalItems];
         readOsu = new ReadOsu();
 
         for(int i = 0; i < totalItems; i++) {
@@ -136,8 +137,7 @@ public class SongListMenu extends StackPane {
             songList = songFolder.listFiles();
             File file = new File(songList[selectedSongIndex].getPath() +"/highScore.txt");
             RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            int TMP = raf.readInt();
-            return TMP;
+            return raf.readInt();
         }catch (IOException e){
             highScores[selectedSongIndex] = 0;
             return 0;
