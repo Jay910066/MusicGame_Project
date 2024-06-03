@@ -142,13 +142,13 @@ public class Settings extends VBox {
                 throw new RuntimeException(e);
             }
         });
-        effectVolumeButton.setOnAction(new EventHandler<ActionEvent>() {//播音效
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                SoundEffectPlayer.play();
-                SoundEffectPlayer.stop();
-            }
+        //播音效
+        effectVolumeButton.setOnAction(e -> {
+            SoundEffectPlayer.seek(Duration.ZERO);
+            SoundEffectPlayer.play();
         });
+
+
 
         settings.add(effectVolumeLabel, 0, 3);
         settings.add(effectVolumeSlider, 1, 3);
