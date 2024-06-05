@@ -545,8 +545,8 @@ public class GamePlay extends Pane {
         comboText.setTextAlignment(TextAlignment.CENTER);
         comboText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
         comboText.setFill(Color.WHITE);
-        comboText.setX(centerX + 150);
-        comboText.setY(centerY - 250);
+        comboText.setX(900);
+        comboText.setY(170);
         comboText.setEffect(new Glow(1));
         getChildren().add(comboText);
     }
@@ -555,12 +555,12 @@ public class GamePlay extends Pane {
      */
     private void setScoreText(){
         ScoreText = new Text();
-        ScoreText.setWrappingWidth(200);
+        ScoreText.setWrappingWidth(300);
         ScoreText.setTextAlignment(TextAlignment.CENTER);
         ScoreText.setStyle("-fx-font-size: 56px; -fx-font-weight: bold;");
         ScoreText.setFill(Color.WHITE);
-        ScoreText.setX(centerX - 650);
-        ScoreText.setY(centerY - 400);
+        ScoreText.setX(205);
+        ScoreText.setY(170);
         getChildren().add(ScoreText);
     }
     /**
