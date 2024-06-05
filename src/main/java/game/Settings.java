@@ -9,10 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Slider;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -25,7 +29,7 @@ import java.io.IOException;
 /**
  * 設定畫面
  */
-public class Settings extends VBox {
+public class Settings extends Pane {
     private ScreenManager screenManager;
     public static double flowSpeed;//音符下落速度
     public static double volume;//歌曲音效
@@ -52,112 +56,29 @@ public class Settings extends VBox {
             volume = getConfig("Volume", Double.class);
             offset = getConfig("Offset", Integer.class);
             effectVolume = getConfig("EffectVolume", Double.class);
-        } catch (IOException e) {
+        }catch(IOException e) {
             throw new RuntimeException(e);
         }
 
-        GridPane settings = new GridPane();
-        getChildren().add(settings);
-        settings.setHgap(10);
-        settings.setVgap(10);
-        Label flowSpeedLabel = new Label("Flow Speed:");
-        TextField flowSpeedField = new TextField();
-        Text flowSpeedText = new Text(String.valueOf(flowSpeed));
-        settings.add(flowSpeedLabel, 0, 0);
-        settings.add(flowSpeedField, 1, 0);
-        settings.add(flowSpeedText, 2, 0);
 
-        flowSpeedField.setOnAction(e -> {
-            try {
-                flowSpeed = Double.parseDouble(flowSpeedField.getText());
-                flowSpeedText.setText(flowSpeedField.getText());
-                setConfig("FlowSpeed",flowSpeed);
-            }catch(NumberFormatException ex) {
-                flowSpeedField.setText(flowSpeedText.getText());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        ImageView settingsPanel = new ImageView("file:Resources/Images/setting_panel.png");
+        settingsPanel.setEffect(new Bloom(0.5));
+        getChildren().add(settingsPanel);
 
+        setFlowSpeedInput();
+        setOffsetInput();
+        setVolumeInput();
+        setEffectVolumeInput();
 
-        Label offsetLabel = new Label("Offset:");
-        TextField offsetField = new TextField();
-        Text offsetText = new Text(String.valueOf(offset));
-        settings.add(offsetLabel, 0, 1);
-        settings.add(offsetField, 1, 1);
-        settings.add(offsetText, 2, 1);
-
-
-        offsetField.setOnAction(e -> {
-            try {
-                offset = Integer.parseInt(offsetField.getText());
-                offsetText.setText(offsetField.getText());
-                setConfig("Offset", offset);
-            }catch(NumberFormatException ex) {
-                offsetField.setText(offsetText.getText());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-        File songFolder = new File("Resources/Songs");
-        songList = songFolder.listFiles();
-        backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
-        backgroundSongPlayer = new MediaPlayer(backgroundSong);
-        Label volumeLabel = new Label("Volume:");
-        Slider volumeSlider = new Slider();
-        volumeSlider.setPrefWidth(200);
-        volumeSlider.setValue(volume);
-        Text volumeText = new Text(String.valueOf(Math.round(volume)));
-        backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().divide(100));
-        volumeSlider.valueProperty().addListener(ov -> {
-            volume = volumeSlider.getValue();
-            volumeText.setText(String.valueOf(Math.round(volume)));
-            try {
-                setConfig("Volume",volume);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        settings.add(volumeLabel, 0, 2);
-        settings.add(volumeSlider, 1, 2);
-        settings.add(volumeText, 2, 2);
-
-        Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
-        SoundEffectPlayer = new MediaPlayer(hitSound);
-        Label effectVolumeLabel = new Label("EffectVolume:");
-        Slider effectVolumeSlider = new Slider();
-        effectVolumeSlider.setPrefWidth(200);
-        effectVolumeSlider.setValue(effectVolume);
-        Text effectVolumeText = new Text((String.valueOf(Math.round(effectVolume))));
-        Button effectVolumeButton = new Button("Play");
-        SoundEffectPlayer.volumeProperty().bind(effectVolumeSlider.valueProperty().divide(100));
-        effectVolumeSlider.valueProperty().addListener(ov -> {
-            effectVolume = effectVolumeSlider.getValue();
-            effectVolumeText.setText(String.valueOf(Math.round(effectVolume)));
-            try {
-                setConfig("EffectVolume",effectVolume);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        //播音效
-        effectVolumeButton.setOnAction(e -> {
-            SoundEffectPlayer.seek(Duration.ZERO);
-            SoundEffectPlayer.play();
-        });
-
-
-
-        settings.add(effectVolumeLabel, 0, 3);
-        settings.add(effectVolumeSlider, 1, 3);
-        settings.add(effectVolumeText, 2, 3);
-        settings.add(effectVolumeButton, 3, 3);
 
         SoundEffect selectsoundEffect = new SoundEffect();
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
-        quitButton.setOnMouseEntered(e -> {quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage());selectsoundEffect.playSelectSound();});
+        quitButton.setLayoutY(980);
+
+        quitButton.setOnMouseEntered(e -> {
+            quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage());
+            selectsoundEffect.playSelectSound();
+        });
         quitButton.setOnMouseExited(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton.png").getImage()));
         quitButton.setOnMouseClicked(e -> goBack());
 
@@ -167,6 +88,148 @@ public class Settings extends VBox {
         });
 
         getChildren().add(quitButton);
+    }
+
+    private void setFlowSpeedInput() {
+        Text flowSpeedText = new Text(String.valueOf(flowSpeed));
+        flowSpeedText.setLayoutX(980);
+        flowSpeedText.setLayoutY(355);
+        flowSpeedText.setStyle("-fx-font-size: 52px;-fx-font-weight: bold;");
+        flowSpeedText.setFill(Color.WHITE);
+        flowSpeedText.setEffect(new Glow(1));
+        getChildren().add(flowSpeedText);
+
+        TextField flowSpeedField = new TextField();
+        flowSpeedField.setLayoutX(740);
+        flowSpeedField.setLayoutY(370);
+        flowSpeedField.setPrefWidth(170);
+        flowSpeedField.setPrefHeight(70);
+        flowSpeedField.setStyle("-fx-font-size: 36px;-fx-font-weight: bold;" +
+                                "-fx-background-color:#404040;-fx-text-inner-color: white;");
+        getChildren().add(flowSpeedField);
+
+
+        flowSpeedField.setOnAction(e -> {
+            try {
+                flowSpeed = Double.parseDouble(flowSpeedField.getText());
+                flowSpeedText.setText(flowSpeedField.getText());
+                setConfig("FlowSpeed", flowSpeed);
+            }catch(NumberFormatException ex) {
+                flowSpeedField.setText(flowSpeedText.getText());
+            }catch(IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+    }
+
+    private void setOffsetInput() {
+        Text offsetText = new Text(String.valueOf(offset));
+        offsetText.setLayoutX(900);
+        offsetText.setLayoutY(500);
+        offsetText.setStyle("-fx-font-size: 52px;-fx-font-weight: bold;");
+        offsetText.setFill(Color.WHITE);
+        offsetText.setEffect(new Glow(1));
+        getChildren().add(offsetText);
+
+        TextField offsetField = new TextField();
+        offsetField.setLayoutX(740);
+        offsetField.setLayoutY(515);
+        offsetField.setPrefWidth(170);
+        offsetField.setPrefHeight(70);
+        offsetField.setStyle("-fx-font-size: 36px;-fx-font-weight: bold;" +
+                                "-fx-background-color:#404040;-fx-text-inner-color: white;");
+        getChildren().add(offsetField);
+
+        offsetField.setOnAction(e -> {
+            try {
+                offset = Integer.parseInt(offsetField.getText());
+                offsetText.setText(offsetField.getText());
+                setConfig("Offset", offset);
+            }catch(NumberFormatException ex) {
+                offsetField.setText(offsetText.getText());
+            }catch(IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+    }
+
+    private void setVolumeInput(){
+        File songFolder = new File("Resources/Songs");
+        songList = songFolder.listFiles();
+        backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
+        backgroundSongPlayer = new MediaPlayer(backgroundSong);
+
+        Slider volumeSlider = new Slider();
+        volumeSlider.setLayoutX(740);
+        volumeSlider.setLayoutY(700);
+        volumeSlider.setPrefWidth(375);
+        volumeSlider.setValue(volume);
+        getChildren().add(volumeSlider);
+
+        Text volumeText = new Text(String.valueOf(Math.round(volume)));
+        volumeText.setLayoutX(900);
+        volumeText.setLayoutY(651);
+        volumeText.setStyle("-fx-font-size: 52px;-fx-font-weight: bold;");
+        volumeText.setFill(Color.WHITE);
+        volumeText.setEffect(new Glow(1));
+        getChildren().add(volumeText);
+
+        backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().divide(100));
+
+        volumeSlider.valueProperty().addListener(ov -> {
+            volume = volumeSlider.getValue();
+            volumeText.setText(String.valueOf(Math.round(volume)));
+            try {
+                setConfig("Volume", volume);
+            }catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void setEffectVolumeInput() {
+        Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
+        SoundEffectPlayer = new MediaPlayer(hitSound);
+
+        Slider effectVolumeSlider = new Slider();
+        effectVolumeSlider.setLayoutX(740);
+        effectVolumeSlider.setLayoutY(850);
+        effectVolumeSlider.setPrefWidth(375);
+        effectVolumeSlider.setValue(effectVolume);
+        getChildren().add(effectVolumeSlider);
+
+        Text effectVolumeText = new Text((String.valueOf(Math.round(effectVolume))));
+        effectVolumeText.setLayoutX(980);
+        effectVolumeText.setLayoutY(803);
+        effectVolumeText.setStyle("-fx-font-size: 52px;-fx-font-weight: bold;");
+        effectVolumeText.setFill(Color.WHITE);
+        effectVolumeText.setEffect(new Glow(1));
+        getChildren().add(effectVolumeText);
+
+        SoundEffectPlayer.volumeProperty().bind(effectVolumeSlider.valueProperty().divide(100));
+
+        effectVolumeSlider.valueProperty().addListener(ov -> {
+            effectVolume = effectVolumeSlider.getValue();
+            effectVolumeText.setText(String.valueOf(Math.round(effectVolume)));
+            try {
+                setConfig("EffectVolume", effectVolume);
+            }catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Button effectVolumeButton = new Button("Play");
+        effectVolumeButton.setLayoutX(1100);
+        effectVolumeButton.setLayoutY(758);
+        effectVolumeButton.setStyle("-fx-font-size: 24px;-fx-font-weight: bold;-fx-font:Microsoft YaHei UI Bold;" +
+                                    "-fx-background-color: #404040;-fx-text-fill: #f0e0bc;");
+        getChildren().add(effectVolumeButton);
+
+        //播音效
+        effectVolumeButton.setOnAction(e -> {
+            SoundEffectPlayer.seek(Duration.ZERO);
+            SoundEffectPlayer.play();
+        });
     }
 
     /**
@@ -190,12 +253,11 @@ public class Settings extends VBox {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonNode = objectMapper.readValue(new File("./Resources/config.json"), ObjectNode.class);
         if(Function.equals("Offset")) {
-            jsonNode.put("Offset", (int)value);
-        }
-        else {
+            jsonNode.put("Offset", (int) value);
+        }else {
             jsonNode.put(Function, value);
         }
-        try (FileWriter file = new FileWriter("./Resources/config.json")) {
+        try(FileWriter file = new FileWriter("./Resources/config.json")) {
             file.write(jsonNode.toString());
         }
     }
