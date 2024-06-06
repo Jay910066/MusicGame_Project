@@ -38,8 +38,6 @@ public class Settings extends Pane {
     public static Slider volumeSlider;
     private String previousScreen;//前一個螢幕
     private File[] songList;//讀取歌用
-    private Media backgroundSong;//播放背景歌曲
-    public MediaPlayer backgroundSongPlayer;
     private MediaPlayer SoundEffectPlayer;
 
     /**
@@ -155,11 +153,6 @@ public class Settings extends Pane {
     }
 
     private void setVolumeInput(){
-        File songFolder = new File("Resources/Songs");
-        songList = songFolder.listFiles();
-        backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
-        backgroundSongPlayer = new MediaPlayer(backgroundSong);
-
         volumeSlider = new Slider();
         volumeSlider.setLayoutX(740);
         volumeSlider.setLayoutY(700);
@@ -174,8 +167,6 @@ public class Settings extends Pane {
         volumeText.setFill(Color.WHITE);
         volumeText.setEffect(new Glow(1));
         getChildren().add(volumeText);
-
-        backgroundSongPlayer.volumeProperty().bind(volumeSlider.valueProperty().divide(100));
 
         volumeSlider.valueProperty().addListener(ov -> {
             volume = volumeSlider.getValue();
@@ -239,10 +230,8 @@ public class Settings extends Pane {
     private void goBack() {
         if(previousScreen.equals("MainMenu")) {
             screenManager.switchToMainMenu();
-            backgroundSongPlayer.stop();
         }else if(previousScreen.equals("SongListMenu")) {
             screenManager.switchToSongListMenu();
-            backgroundSongPlayer.stop();
         }
     }
 
