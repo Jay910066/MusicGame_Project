@@ -43,7 +43,6 @@ public class SongListMenu extends StackPane {
     private Text creatorText; //圖譜作者
     private Text highScoreText;
     private Media selectedSong; //選擇的歌曲
-    private MediaPlayer previewSongPlayer; //預覽歌曲播放器
 
 
     /**
@@ -61,16 +60,18 @@ public class SongListMenu extends StackPane {
         setDetailBox(screenManager);
 
         //設定選擇器的初始選擇
+        RhythmGame.BGMPlayer.stop();
         selectedSong = new Media(new File(songList[selectedIndex], "song.mp3").toURI().toString());
-        previewSongPlayer = new MediaPlayer(selectedSong);
+        RhythmGame.BGMPlayer = new MediaPlayer(selectedSong);
         selectItem(selectedIndex);
+
 
         //選擇器的點擊事件
         songBoxes[selectedIndex].setOnMouseClicked(e -> {
             //如果是4K鍵盤模式，則切換到遊戲畫面
             if(readOsu.is4K_Mania()) {
                 screenManager.switchToGamePlay(songList[selectedIndex]);
-                previewSongPlayer.stop();
+                RhythmGame.BGMPlayer.stop();
             }
             //否則顯示不支援模式的訊息
             else {
@@ -83,7 +84,6 @@ public class SongListMenu extends StackPane {
             //按下ESC鍵，切換到主畫面
             if(e.getCode() == KeyCode.ESCAPE) {
                 screenManager.switchToMainMenu();
-                previewSongPlayer.stop();
             }
             //按下Enter鍵，如果是4K鍵盤模式，則切換到遊戲畫面
             else if(e.getCode() == KeyCode.ENTER) {
@@ -91,7 +91,7 @@ public class SongListMenu extends StackPane {
                     SoundEffect confirmSound = new SoundEffect();
                     confirmSound.playComfirmSound();
                     screenManager.switchToGamePlay(songList[selectedIndex]);
-                    previewSongPlayer.stop();
+                    RhythmGame.BGMPlayer.stop();
                 }
                 //否則顯示不支援模式的訊息
                 else {
@@ -280,7 +280,6 @@ public class SongListMenu extends StackPane {
         quitButton.setOnMouseExited(e -> quitButton.setImage(new Image("file:Resources/Images/QuitButton.png")));
         quitButton.setOnMouseClicked(e -> {
             screenManager.switchToMainMenu();
-            previewSongPlayer.stop();
         });
         buttonBox.getChildren().add(quitButton);
 
@@ -290,7 +289,6 @@ public class SongListMenu extends StackPane {
         settingsButton.setOnMouseExited(e -> settingsButton.setImage(new Image("file:Resources/Images/SettingsButton.png")));
         settingsButton.setOnMouseClicked(e -> {
             screenManager.switchToSettings("SongListMenu");
-            previewSongPlayer.stop();
         });
         buttonBox.getChildren().add(settingsButton);
     }
@@ -335,12 +333,13 @@ public class SongListMenu extends StackPane {
         highScoreText.setText(String.valueOf(highScores[index]));
 
         //播放預覽歌曲
-        previewSongPlayer.stop();
+        RhythmGame.BGMPlayer.stop();
         selectedSong = new Media(new File(songList[index], "song.mp3").toURI().toString());
-        previewSongPlayer = new MediaPlayer(selectedSong);
-        previewSongPlayer.setVolume(Settings.volume / 100.0);
-        previewSongPlayer.setStartTime(Duration.millis(readOsu.getPreviewTime()));
-        previewSongPlayer.play();
+        RhythmGame.BGMPlayer = new MediaPlayer(selectedSong);
+        RhythmGame.BGMPlayer.volumeProperty().bind(Settings.volumeSlider.valueProperty().divide(100));
+        //RhythmGame.BGMPlayer.setVolume(Settings.volume / 100.0);
+        RhythmGame.BGMPlayer.setStartTime(Duration.millis(readOsu.getPreviewTime()));
+        RhythmGame.BGMPlayer.play();
 
         //設定選擇器顯示的歌曲
         selector.getChildren().clear();

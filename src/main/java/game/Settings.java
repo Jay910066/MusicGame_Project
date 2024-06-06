@@ -35,6 +35,7 @@ public class Settings extends Pane {
     public static double volume;//歌曲音效
     public static double effectVolume;//音效音量
     public static int offset;
+    public static Slider volumeSlider;
     private String previousScreen;//前一個螢幕
     private File[] songList;//讀取歌用
     private Media backgroundSong;//播放背景歌曲
@@ -159,7 +160,7 @@ public class Settings extends Pane {
         backgroundSong = new Media(new File(songList[0], "song.mp3").toURI().toString());
         backgroundSongPlayer = new MediaPlayer(backgroundSong);
 
-        Slider volumeSlider = new Slider();
+        volumeSlider = new Slider();
         volumeSlider.setLayoutX(740);
         volumeSlider.setLayoutY(700);
         volumeSlider.setPrefWidth(375);
