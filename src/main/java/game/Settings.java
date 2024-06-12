@@ -34,7 +34,7 @@ public class Settings extends Pane {
     public static double flowSpeed;//音符下落速度
     public static double volume;//歌曲音效
     public static double effectVolume;//音效音量
-    public static int offset;
+    public static int offset; //判定偏移量(毫秒)
     public static Slider volumeSlider;
     private String previousScreen;//前一個螢幕
     private MediaPlayer SoundEffectPlayer;
@@ -69,7 +69,11 @@ public class Settings extends Pane {
         setQuitButton();
     }
 
+    /**
+     * 設置音符下落速度設定欄
+     */
     private void setFlowSpeedInput() {
+        //當前音符下落速度
         Text flowSpeedText = new Text(String.valueOf(flowSpeed));
         flowSpeedText.setLayoutX(980);
         flowSpeedText.setLayoutY(355);
@@ -78,6 +82,7 @@ public class Settings extends Pane {
         flowSpeedText.setEffect(new Glow(1));
         getChildren().add(flowSpeedText);
 
+        //音符下落速度輸入欄
         TextField flowSpeedField = new TextField();
         flowSpeedField.setLayoutX(740);
         flowSpeedField.setLayoutY(370);
@@ -101,7 +106,11 @@ public class Settings extends Pane {
         });
     }
 
+    /**
+     * 設置判定偏移量設定欄
+     */
     private void setOffsetInput() {
+        //當前判定偏移量
         Text offsetText = new Text(String.valueOf(offset));
         offsetText.setLayoutX(900);
         offsetText.setLayoutY(500);
@@ -110,6 +119,7 @@ public class Settings extends Pane {
         offsetText.setEffect(new Glow(1));
         getChildren().add(offsetText);
 
+        //判定偏移量輸入欄
         TextField offsetField = new TextField();
         offsetField.setLayoutX(740);
         offsetField.setLayoutY(515);
@@ -132,7 +142,11 @@ public class Settings extends Pane {
         });
     }
 
+    /**
+     * 設置歌曲音量設定欄
+     */
     private void setVolumeInput(){
+        //歌曲音量滑條
         volumeSlider = new Slider();
         volumeSlider.setLayoutX(740);
         volumeSlider.setLayoutY(700);
@@ -140,6 +154,7 @@ public class Settings extends Pane {
         volumeSlider.setValue(volume);
         getChildren().add(volumeSlider);
 
+        //當前歌曲音量
         Text volumeText = new Text(String.valueOf(Math.round(volume)));
         volumeText.setLayoutX(900);
         volumeText.setLayoutY(651);
@@ -159,10 +174,14 @@ public class Settings extends Pane {
         });
     }
 
+    /**
+     * 設置音效音量設定欄
+     */
     private void setEffectVolumeInput() {
         Media hitSound = new Media(new File("Resources/Audio/Hit.wav").toURI().toString());
         SoundEffectPlayer = new MediaPlayer(hitSound);
 
+        //音效音量滑條
         Slider effectVolumeSlider = new Slider();
         effectVolumeSlider.setLayoutX(740);
         effectVolumeSlider.setLayoutY(850);
@@ -170,6 +189,7 @@ public class Settings extends Pane {
         effectVolumeSlider.setValue(effectVolume);
         getChildren().add(effectVolumeSlider);
 
+        //當前音效音量
         Text effectVolumeText = new Text((String.valueOf(Math.round(effectVolume))));
         effectVolumeText.setLayoutX(980);
         effectVolumeText.setLayoutY(803);
@@ -190,6 +210,7 @@ public class Settings extends Pane {
             }
         });
 
+        //音效音量測試鈕
         Button effectVolumeButton = new Button("Play");
         effectVolumeButton.setLayoutX(1100);
         effectVolumeButton.setLayoutY(758);
@@ -204,6 +225,9 @@ public class Settings extends Pane {
         });
     }
 
+    /**
+     * 設置返回按鈕
+     */
     private void setQuitButton() {
         SoundEffect selectsoundEffect = new SoundEffect();
         ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
@@ -235,10 +259,19 @@ public class Settings extends Pane {
         }
     }
 
+    /**
+     * 取得前一畫面名稱
+     */
     public void setPreviousScreen(String previousScreen) {
         this.previousScreen = previousScreen;
     }
 
+    /**
+     * 設定config.json檔案
+     *
+     * @param Function 設定項目
+     * @param value 設定值
+     */
     private void setConfig(String Function, double value) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonNode = objectMapper.readValue(new File("./Resources/config.json"), ObjectNode.class);
@@ -252,6 +285,13 @@ public class Settings extends Pane {
         }
     }
 
+    /**
+     * 讀取config.json檔案
+     *
+     * @param Function 設定項目
+     * @param valueType 設定值型態
+     * @return 設定值
+     */
     private <T> T getConfig(String Function, Class<T> valueType) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(new File("./Resources/config.json"));
