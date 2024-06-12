@@ -35,7 +35,7 @@ public class Settings extends Pane {
     public static double volume;//歌曲音效
     public static double effectVolume;//音效音量
     public static int offset; //判定偏移量(毫秒)
-    public static Slider volumeSlider;
+    public static Slider volumeSlider; //音量滑條
     private String previousScreen;//前一個螢幕
     private MediaPlayer SoundEffectPlayer;
 
