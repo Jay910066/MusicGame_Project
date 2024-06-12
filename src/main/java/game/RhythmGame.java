@@ -35,7 +35,6 @@ public class RhythmGame extends Application {
 
     /**
      * 設定背景音樂
-
      */
     public static void setBGMPlayer() {
         File songFolder = new File("Resources/Songs");

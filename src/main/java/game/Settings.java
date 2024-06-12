@@ -37,7 +37,6 @@ public class Settings extends Pane {
     public static int offset;
     public static Slider volumeSlider;
     private String previousScreen;//前一個螢幕
-    private File[] songList;//讀取歌用
     private MediaPlayer SoundEffectPlayer;
 
     /**
@@ -59,7 +58,6 @@ public class Settings extends Pane {
             throw new RuntimeException(e);
         }
 
-
         ImageView settingsPanel = new ImageView("file:Resources/Images/setting_panel.png");
         settingsPanel.setEffect(new Bloom(0.5));
         getChildren().add(settingsPanel);
@@ -68,25 +66,7 @@ public class Settings extends Pane {
         setOffsetInput();
         setVolumeInput();
         setEffectVolumeInput();
-
-
-        SoundEffect selectsoundEffect = new SoundEffect();
-        ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
-        quitButton.setLayoutY(980);
-
-        quitButton.setOnMouseEntered(e -> {
-            quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage());
-            selectsoundEffect.playSelectSound();
-        });
-        quitButton.setOnMouseExited(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton.png").getImage()));
-        quitButton.setOnMouseClicked(e -> goBack());
-
-        this.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ESCAPE)
-                goBack();
-        });
-
-        getChildren().add(quitButton);
+        setQuitButton();
     }
 
     private void setFlowSpeedInput() {
@@ -222,6 +202,26 @@ public class Settings extends Pane {
             SoundEffectPlayer.seek(Duration.ZERO);
             SoundEffectPlayer.play();
         });
+    }
+
+    private void setQuitButton() {
+        SoundEffect selectsoundEffect = new SoundEffect();
+        ImageView quitButton = new ImageView("file:Resources/Images/QuitButton.png");
+        quitButton.setLayoutY(980);
+
+        quitButton.setOnMouseEntered(e -> {
+            quitButton.setImage(new ImageView("file:Resources/Images/QuitButton_Selected.png").getImage());
+            selectsoundEffect.playSelectSound();
+        });
+        quitButton.setOnMouseExited(e -> quitButton.setImage(new ImageView("file:Resources/Images/QuitButton.png").getImage()));
+        quitButton.setOnMouseClicked(e -> goBack());
+
+        this.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ESCAPE)
+                goBack();
+        });
+
+        getChildren().add(quitButton);
     }
 
     /**
